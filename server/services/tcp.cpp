@@ -18,7 +18,7 @@ static bool set_reuseaddr(socket_handle_t s) {
 static std::atomic<bool> g_tcp_stop{false};
 static socket_handle_t g_listen_socket = invalid_socket_handle;
 
-int run_tcp(const char* host, const char* port) {
+int run_tcp(const std::string& host, const std::string& port) {
   g_tcp_stop = false;
   if (!net_init()) {
     std::cerr << "Failed to init networking" << std::endl;
@@ -32,7 +32,7 @@ int run_tcp(const char* host, const char* port) {
   hints.ai_flags = AI_PASSIVE; // for bind
 
   addrinfo* result = nullptr;
-  int gai = getaddrinfo(host, port, &hints, &result);
+  int gai = getaddrinfo(host.c_str(), port.c_str(), &hints, &result);
   if (gai != 0 || !result) {
 #ifdef _WIN32
     std::cerr << "getaddrinfo failed: " << gai << std::endl;

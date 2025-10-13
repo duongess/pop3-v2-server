@@ -6,8 +6,9 @@
 
 namespace Config {
     struct TCPConfig {
-        std::string host = HOST_DEFAULT;
-        int port = PORT_TCP_DEFAULT;
+        std::string hostServer = HOST_SERVER_DEFAULT;
+        std::string hostClient = HOST_CLIENT_DEFAULT;
+        std::string port = PORT_TCP_DEFAULT;
         int bufferSize = BUFFER_SIZE;
     };
 }

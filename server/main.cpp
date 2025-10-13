@@ -11,6 +11,7 @@ int main(int /*argc*/, char* /*argv*/[]) {
 
   std::thread tcp_thread;
   std::atomic<bool> tcp_running{false};
+  std::string host = cfg.tcp.hostServer, port;
 
   auto start_tcp = [&]() {
     if (tcp_running.load()) {
@@ -18,12 +19,12 @@ int main(int /*argc*/, char* /*argv*/[]) {
       return;
     }
     tcp_running = true;
+    port = cfg.tcp.port;
     tcp_thread = std::thread([&]() {
-      std::string port_str = std::to_string(cfg.tcp.port);
-      (void)run_tcp(cfg.tcp.host.c_str(), port_str.c_str());
+      run_tcp(host, port);
       tcp_running = false;
     });
-    std::cout << "✅ Started TCP service on " << cfg.tcp.host << ":" << cfg.tcp.port << "\n";
+    std::cout << "✅ Started TCP service on " << host << ":" << port << "\n";
   };
 
   auto stop_tcp_srv = [&]() {

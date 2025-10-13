@@ -19,6 +19,7 @@ add_executable(server
 
 add_executable(client
   client/main.cpp
+  client/services/tcp.cpp
   common/protocol.cpp
   common/utils.cpp
 )

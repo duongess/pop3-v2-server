@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Config {
-    inline const int PORT_TCP_DEFAULT = 6000;
-    inline const int PORT_UDP_DEFAULT = 6001;
-    inline const int PORT_HTTP_DEFAULT = 8080;
+    inline const std::string PORT_TCP_DEFAULT = "6000";
+    // inline const std::string PORT_UDP_DEFAULT = "6001";
+    // inline const std::string PORT_HTTP_DEFAULT = "8080";
 }
