@@ -14,7 +14,7 @@ Usage
 
 Custom
 - C1: Set host and port in folder `config`
-- C2: Run server, client with a argv host eg. `build/Release/server.exe`
+- C2: Run server, client with a argv host eg. `build/Release/client.exe 192.168.10.1`
 
 Project Structure
 ```bath
