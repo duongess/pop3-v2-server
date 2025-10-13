@@ -6,16 +6,20 @@
 #include "services/tcp.h"
 #include "../config/config.h"
 
-int main(int /*argc*/, char* /*argv*/[]) {
+int main(int argc, char* argv[]) {
   Config::AppConfig cfg = Config::defaultConfig();
 
   std::thread tcp_thread;
   std::atomic<bool> tcp_running{false};
   std::string host = cfg.tcp.hostServer, port;
 
+  if (argc >= 2) {
+    host = argv[1];
+  }
+
   auto start_tcp = [&]() {
     if (tcp_running.load()) {
-      std::cout << "⚠️  TCP service already running\n";
+      std::cout << "TCP service already running\n";
       return;
     }
     tcp_running = true;
@@ -24,24 +28,23 @@ int main(int /*argc*/, char* /*argv*/[]) {
       run_tcp(host, port);
       tcp_running = false;
     });
-    std::cout << "✅ Started TCP service on " << host << ":" << port << "\n";
+    std::cout << "Started TCP service on " << host << ":" << port << "\n";
   };
 
   auto stop_tcp_srv = [&]() {
     if (!tcp_running.load()) {
-      std::cout << "⚠️  TCP service is not running\n";
+      std::cout << "TCP service is not running\n";
       return;
     }
     stop_tcp();
     if (tcp_thread.joinable()) tcp_thread.join();
-    std::cout << "🛑 Stopped TCP service\n";
+    std::cout << "Stopped TCP service\n";
   };
 
   // Main loop
   while (true) {
     std::cout << "\n=== Network System Menu ===\n";
     std::cout << "1) Start TCP service\n";
-    std::cout << "2) Stop TCP service\n";
     std::cout << "q) Quit\n> ";
 
     std::string choice;
@@ -53,9 +56,11 @@ int main(int /*argc*/, char* /*argv*/[]) {
     switch (option) {
       case '1':
         start_tcp();
+        std::cout << "Press e for stop TCP service\n";
         break;
 
-      case '2':
+      case 'e':
+      case 'E':
         stop_tcp_srv();
         break;
 
@@ -66,7 +71,7 @@ int main(int /*argc*/, char* /*argv*/[]) {
         return 0;
 
       default:
-        std::cout << "❓ Unknown option: " << choice << "\n";
+        std::cout << "Unknown option: " << choice << "\n";
         break;
     }
   }

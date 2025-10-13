@@ -42,7 +42,7 @@ int run_tcp_client(const std::string&  host, const std::string&  port, const std
     return 1;
   }
 
-  std::cout << "✅ Connected to " << host << ":" << port << "\n";
+  std::cout << "Connected to " << host << ":" << port << "\n";
 
   // --- Gửi bản tin ---
   const char* data = message.c_str();
@@ -50,7 +50,7 @@ int run_tcp_client(const std::string&  host, const std::string&  port, const std
   int sent_total = 0;
 
   while (sent_total < total_len) {
-    int sent = send(s, data + sent_total, total_len - sent_total, 0);
+    int sent = send(s, message.c_str(), total_len - sent_total, 0);
     if (sent <= 0) {
       std::cerr << "❌ Send failed.\n";
       close_socket(s);
@@ -60,7 +60,7 @@ int run_tcp_client(const std::string&  host, const std::string&  port, const std
     sent_total += sent;
   }
 
-  std::cout << "📤 Đã gửi thành công " << sent_total << " bytes tới server.\n";
+  std::cout << "Sent successfully " << sent_total << " bytes to server.\n";
 
   // --- Cleanup ---
   close_socket(s);

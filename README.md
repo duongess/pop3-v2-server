@@ -9,10 +9,39 @@ Build (CMake)
 - Build server and client: `cmake --build build --config Release`
 
 Usage
-- Start server (default port 5050): `build/Release/server.exe`
-  - Custom port: `server 6000`
-- Run client (default connects to 127.0.0.1:5050): `build/Release/client.exe ${host-server}` (`build\Release\client.exe localhost 6000`)
-  - Custom host/port/message: `client 127.0.0.1 5050 "Hello"`
+- Run server: `build/Release/server.exe`
+- Run client: `build/Release/client.exe`
+
+Custom
+- C1: Set host and port in folder `config`
+- C2: Run server, client with a argv host eg. `build/Release/server.exe`
+
+Project Structure
+```bath
+Network-System/
+ ├── client/
+ │   ├── main.cpp
+ │   └── services/
+ │       └── tcp.cpp
+ │
+ ├── server/
+ │   ├── main.cpp
+ │   └── services/
+ │       └── tcp.cpp
+ │
+ ├── config/
+ │   ├── host.h
+ │   ├── port.h
+ │   ├── tcp.h
+ │   └── config.h
+ │
+ ├── common/
+ │   ├── utils.h
+ │   └── protocol.h
+ │
+ ├── CMakeLists.txt
+ └── README.md
+```
 
 Notes
 - Windows links against `Ws2_32` automatically via CMake.

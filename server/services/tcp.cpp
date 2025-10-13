@@ -82,19 +82,15 @@ int run_tcp(const std::string& host, const std::string& port) {
     }
     std::cout << "Client connected" << std::endl;
 
-    while (!g_tcp_stop.load()) {
-      int received = recv(client, buffer, (int)sizeof(buffer), 0);
-      if (received <= 0) {
-        break; // disconnect or error
-      }
-      int total_sent = 0;
-      while (total_sent < received) {
-        int sent = send(client, buffer + total_sent, received - total_sent, 0);
-        if (sent <= 0) { break; }
-        total_sent += sent;
-      }
-      std::cout << "The message the client sends is " << received << " char" << std::endl;
+    char buffer[1024];
+    int received = recv(client, buffer, sizeof(buffer) - 1, 0);
+    if (received > 0) {
+        buffer[received] = '\0'; // thêm ký tự kết thúc chuỗi
+        std::string message(buffer); // chuyển char[] -> std::string
+        std::cout << "Received: " << message << std::endl;
     }
+
+
     std::cout << "Client disconnected" << std::endl;
     close_socket(client);
   }
