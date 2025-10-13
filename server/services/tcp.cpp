@@ -2,9 +2,9 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include "server.h"
-#include "../common/utils.h"
-#include "../common/protocol.h"
+#include <atomic>
+#include "../../common/utils.h"
+#include "../../common/protocol.h"
 
 static bool set_reuseaddr(socket_handle_t s) {
   int opt = 1;
@@ -15,7 +15,11 @@ static bool set_reuseaddr(socket_handle_t s) {
 #endif
 }
 
-int run_server(const char* host, const char* port) {
+static std::atomic<bool> g_tcp_stop{false};
+static socket_handle_t g_listen_socket = invalid_socket_handle;
+
+int run_tcp(const char* host, const char* port) {
+  g_tcp_stop = false;
   if (!net_init()) {
     std::cerr << "Failed to init networking" << std::endl;
     return 1;
@@ -65,18 +69,20 @@ int run_server(const char* host, const char* port) {
     return 1;
   }
 
+  g_listen_socket = listen_socket;
   std::cout << "Server listening on port " << port << std::endl;
 
   char buffer[kBufferSize];
-  while (true) {
+  while (!g_tcp_stop.load()) {
     socket_handle_t client = accept(listen_socket, nullptr, nullptr);
     if (client == invalid_socket_handle) {
+      if (g_tcp_stop.load()) break;
       std::cerr << "accept failed" << std::endl;
       continue;
     }
     std::cout << "Client connected" << std::endl;
 
-    while (true) {
+    while (!g_tcp_stop.load()) {
       int received = recv(client, buffer, (int)sizeof(buffer), 0);
       if (received <= 0) {
         break; // disconnect or error
@@ -87,14 +93,29 @@ int run_server(const char* host, const char* port) {
         if (sent <= 0) { break; }
         total_sent += sent;
       }
+      std::cout << "The message the client sends is " << received << " char" << std::endl;
     }
-
     std::cout << "Client disconnected" << std::endl;
     close_socket(client);
   }
 
   // Unreachable in current loop, but included for completeness
-  close_socket(listen_socket);
+  if (listen_socket != invalid_socket_handle) close_socket(listen_socket);
+  g_listen_socket = invalid_socket_handle;
   net_cleanup();
+  return 0;
+}
+
+int stop_tcp() {
+  g_tcp_stop = true;
+  // Unblock accept: shutdown + close listening socket
+  if (g_listen_socket != invalid_socket_handle) {
+#ifdef _WIN32
+    shutdown(g_listen_socket, SD_BOTH);
+#else
+    shutdown(g_listen_socket, SHUT_RDWR);
+#endif
+    close_socket(g_listen_socket);
+  }
   return 0;
 }

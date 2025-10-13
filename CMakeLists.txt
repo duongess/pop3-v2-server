@@ -11,7 +11,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/client)
 
 add_executable(server
   server/main.cpp
-  server/server.cpp
+  server/services/tcp.cpp
   server/session.cpp
   common/protocol.cpp
   common/utils.cpp
@@ -27,4 +27,3 @@ if (WIN32)
   target_link_libraries(server PRIVATE Ws2_32)
   target_link_libraries(client PRIVATE Ws2_32)
 endif()
-

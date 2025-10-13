@@ -7,7 +7,7 @@
 
 int main(int argc, char* argv[]) {
   const char* host = "localhost";
-  const char* port = "5050";
+  const char* port = "6000";
   std::string message = kDefaultMessage;
   if (argc >= 2) host = argv[1];
   if (argc >= 3) port = argv[2];

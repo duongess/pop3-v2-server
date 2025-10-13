@@ -2,6 +2,8 @@
 
 Basic C++ TCP echo server and client.
 
+Donwload: Cmake
+
 Build (CMake)
 - Create build: `cmake -S . -B build`
 - Build server and client: `cmake --build build --config Release`
