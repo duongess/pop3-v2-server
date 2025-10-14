@@ -3,6 +3,9 @@
 Basic C++ TCP echo server and client.
 
 Donwload: Cmake
+```
+winget install Kitware.CMake
+```
 
 Build (CMake)
 - Create build: `cmake -S . -B build`
@@ -13,8 +16,8 @@ Usage
 - Run client: `build/Release/client.exe`
 
 Custom
-- C1: Set host and port in folder `config`
-- C2: Run server, client with a argv host eg. `build/Release/client.exe 192.168.10.1`
+- O1: Set host and port in folder `config`
+- O2: Run server, client with a argv host eg. `build/Release/client.exe 192.168.10.1`
 
 Project Structure
 ```bath
