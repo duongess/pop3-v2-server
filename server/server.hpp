@@ -1,4 +1,10 @@
 #pragma once
+#include "../common/protocol.h"
+#include <cstdio>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <algorithm>
 #include <vector>
 #include <memory>
 #include <unordered_map>
@@ -6,11 +12,11 @@
 #include <mutex>
 #include "../common/utils.h"
 #include "session.hpp"
+#include "../types/auth.h"
 
 class Server {
 public:
   Server(std::string host): host_(host) {};
-  enum class AuthResult { Ok, UserNotFound, WrongPassword, AlreadyExists };
 
   bool start(std::string port);
   bool hasUser(const std::string& username) const;

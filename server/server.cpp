@@ -1,10 +1,4 @@
 #include "server.hpp"
-#include "../common/protocol.h"
-#include <cstdio>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <algorithm>
 
 static std::string trim(const std::string& s){
   auto a = s.find_first_not_of(" \t\r\n");
@@ -47,7 +41,7 @@ void Server::saveUsersToFile(const std::string& path) const {
   }
 }
 
-Server::AuthResult Server::signUp(const std::string& username, const std::string& password){
+AuthResult Server::signUp(const std::string& username, const std::string& password){
   std::lock_guard<std::mutex> lk(users_mu_);
   if (users_.count(username)) return AuthResult::AlreadyExists;
   users_[username] = hashPassword(password);
@@ -55,7 +49,7 @@ Server::AuthResult Server::signUp(const std::string& username, const std::string
   return AuthResult::Ok;
 }
 
-Server::AuthResult Server::signIn(const std::string& username, const std::string& password) {
+AuthResult Server::signIn(const std::string& username, const std::string& password) {
   std::lock_guard<std::mutex> lk(users_mu_);
   auto it = users_.find(username);
   if (it == users_.end()) return AuthResult::UserNotFound;
@@ -84,5 +78,5 @@ bool Server::hasAnyUser() const {
 }
 
 void Server::checkAccout() const {
-  std::cout << "Join to server" << this->currentName_ << std::endl;
+  std::cout << "Join to server " << this->currentName_ << std::endl;
 }

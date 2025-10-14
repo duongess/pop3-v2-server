@@ -14,6 +14,7 @@ add_executable(server
   server/services/tcp.cpp
   server/session.cpp
   server/server.cpp
+  server/utils.cpp
   common/protocol.cpp
   common/utils.cpp
 )
