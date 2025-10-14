@@ -3,7 +3,7 @@
 
 addrinfo* resolveAddress(const std::string& host, const std::string& port, bool passive) {
   addrinfo hints{};
-  hints.ai_family = AF_UNSPEC; // IPv4 or IPv6
+  hints.ai_family = AF_INET; // IPv4
   hints.ai_socktype = SOCK_STREAM;
   hints.ai_protocol = IPPROTO_TCP;
   if (passive) hints.ai_flags = AI_PASSIVE; // for bind()
