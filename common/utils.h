@@ -15,5 +15,5 @@ constexpr socket_handle_t invalid_socket_handle = INVALID_SOCKET;
 bool net_init();
 void net_cleanup();
 void close_socket(socket_handle_t s);
-void menuServer();
+addrinfo* resolveAddress(const std::string& host, const std::string& port, bool passive);
 

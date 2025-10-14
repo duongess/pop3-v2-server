@@ -3,7 +3,6 @@
 #include <string>
 #include <cstring>
 #include "../../common/utils.h"
-#include "../../common/protocol.h"
 
 // Run a single TCP echo interaction:
 // connects to host:port, sends message, prints echo, then exits.
