@@ -11,7 +11,7 @@
 #include <string>
 #include <mutex>
 #include "../common/utils.h"
-#include "session.hpp"
+#include "session-manager.hpp"
 #include "../types/auth.h"
 
 class Server {
@@ -27,6 +27,7 @@ public:
   // auth
   AuthResult signUp(const std::string& username, const std::string& password);
   AuthResult signIn(const std::string& username, const std::string& password);
+  void verify(const std::string& username, const std::string& password, const std::string& host, const socket_handle_t& socket_fd);
 
   // broadcast tiện dùng
   void broadcastFrom(Session* who, const std::string& text);
@@ -37,7 +38,7 @@ private:
   std::string currentName_;
 
   // Kết nối
-  std::vector<std::shared_ptr<Session>> sessions_;
+  SessionManager sessionManager_;
 
   // Users (đơn giản cho đồ án): username -> passwordHash
   mutable std::mutex users_mu_;

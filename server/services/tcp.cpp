@@ -1,9 +1,4 @@
-#include <iostream>
-#include <string>
-#include <cstring>
-#include <atomic>
-#include "../../common/utils.h"
-#include "../../common/protocol.h"
+#include "tcp.h"
 
 static bool set_reuseaddr(socket_handle_t s) {
   int opt = 1;
@@ -13,7 +8,7 @@ static bool set_reuseaddr(socket_handle_t s) {
 static std::atomic<bool> g_tcp_stop{false};
 static socket_handle_t g_listen_socket = invalid_socket_handle;
 
-int start_tcp(const std::string& host, const std::string& port) {
+int start_tcp(const std::string& host, const std::string& port, const int& kBufferSize = 4096) {
   std::cout << "[TCP] Starting TCP server on " << host << ":" << port << "...\n";
 
   g_tcp_stop = false;

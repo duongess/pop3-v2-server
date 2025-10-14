@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
       case '1':
         port = cfg.tcp.port;
         tcp_thread = std::thread([&]() {
-          start_tcp(host, port);
+          start_tcp(host, port, cfg.tcp.bufferSize);
         });
         std::cout << "Press e for stop TCP service\n";
         currentServices = Services::TCP;

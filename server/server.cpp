@@ -58,6 +58,17 @@ AuthResult Server::signIn(const std::string& username, const std::string& passwo
   return AuthResult::Ok;
 }
 
+void Server::verify(const std::string& username, const std::string& password, const std::string& host, const socket_handle_t& socket_fd) {
+  if (this->hasUser(username)) {
+    std::cout << "username invaible\n";
+    return;
+  } else if (this->users_[username] == password) {
+    std::cout << "password flase\n";
+    return;
+  }
+  this->sessionManager_.createSessionFor(username, host, socket_fd);
+}
+
 // ... phần start(), onAccept(), broadcastFrom(...) của bạn giữ nguyên,
 // chỉ cần gọi loadUsersFromFile() một lần khi khởi động.
 bool Server::start(std::string port){
