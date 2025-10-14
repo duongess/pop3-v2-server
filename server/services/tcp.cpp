@@ -17,28 +17,14 @@ int start_tcp(const std::string& host, const std::string& port, const int& kBuff
     return 1;
   }
 
-  addrinfo hints{};
-  hints.ai_family = AF_UNSPEC; // IPv4 or IPv6
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_protocol = IPPROTO_TCP;
-  hints.ai_flags = AI_PASSIVE; // for bind
-
-  addrinfo* result = nullptr;
-  int gai = getaddrinfo(host.c_str(), port.c_str(), &hints, &result);
-  if (gai != 0 || !result) {
-    std::cerr << "[TCP] getaddrinfo failed: " << gai << std::endl;
-    net_cleanup();
-    return 1;
-  }
-
+  addrinfo* result = resolveAddress(host, port, true);
   socket_handle_t listen_socket = invalid_socket_handle;
+
   for (addrinfo* ptr = result; ptr != nullptr; ptr = ptr->ai_next) {
     listen_socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
     if (listen_socket == invalid_socket_handle) continue;
     set_reuseaddr(listen_socket);
-    if (bind(listen_socket, ptr->ai_addr, (int)ptr->ai_addrlen) == 0) {
-      break;
-    }
+    if (bind(listen_socket, ptr->ai_addr, (int)ptr->ai_addrlen) == 0) break;
     close_socket(listen_socket);
     listen_socket = invalid_socket_handle;
   }

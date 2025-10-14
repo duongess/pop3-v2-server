@@ -1,32 +1,16 @@
 // TCP client: simple send from user input
-#include <iostream>
-#include <string>
-#include <cstring>
-#include "../../common/utils.h"
-#include "../../common/protocol.h"
+#include "tcp.h"
 
-int run_tcp_client(const std::string&  host, const std::string&  port, const std::string& message) {
+int sendMessage(const std::string&  host, const std::string&  port, const std::string& message) {
   if (!net_init()) {
     std::cerr << "Failed to init networking" << std::endl;
     return 1;
   }
 
   // --- Resolve server address ---
-  addrinfo hints{};
-  hints.ai_family = AF_UNSPEC;
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_protocol = IPPROTO_TCP;
-
-  addrinfo* result = nullptr;
-  int gai = getaddrinfo(host.c_str(), port.c_str(), &hints, &result);
-  if (gai != 0 || !result) {
-    std::cerr << "getaddrinfo failed\n";
-    net_cleanup();
-    return 1;
-  }
-
-  // --- Create socket and connect ---
+  addrinfo* result = resolveAddress(host, port, false);
   socket_handle_t s = invalid_socket_handle;
+
   for (addrinfo* ptr = result; ptr != nullptr; ptr = ptr->ai_next) {
     s = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
     if (s == invalid_socket_handle) continue;
@@ -36,11 +20,7 @@ int run_tcp_client(const std::string&  host, const std::string&  port, const std
   }
   freeaddrinfo(result);
 
-  if (s == invalid_socket_handle) {
-    std::cerr << "Unable to connect to server\n";
-    net_cleanup();
-    return 1;
-  }
+  if (s == invalid_socket_handle) return 1;
 
   std::cout << "Connected to " << host << ":" << port << "\n";
 

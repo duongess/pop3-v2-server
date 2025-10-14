@@ -1,5 +1,7 @@
+// protocol.h
 #pragma once
+#include <string>
+#include <iostream>
+#include "utils.h"
 
-#include <cstddef>
-#include "../types/send.h"
-#include "../types/auth.h"
+addrinfo* resolveAddress(const std::string& host, const std::string& port, bool passive);
