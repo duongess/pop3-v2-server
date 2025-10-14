@@ -94,8 +94,6 @@ int start_tcp(const std::string& host, const std::string& port) {
   if (listen_socket != invalid_socket_handle) close_socket(listen_socket);
   g_listen_socket = invalid_socket_handle;
   net_cleanup();
-
-  std::cout << "[TCP] Server stopped\n";
   return 0;
 }
 

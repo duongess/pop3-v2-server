@@ -38,7 +38,9 @@ int main(int argc, char* argv[]) {
     switch (option) {
       case '1':
         port = cfg.tcp.port;
-        start_tcp(host, port);
+        tcp_thread = std::thread([&]() {
+          start_tcp(host, port);
+        });
         std::cout << "Press e for stop TCP service\n";
         currentServices = Services::TCP;
         break;
