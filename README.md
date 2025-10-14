@@ -12,12 +12,12 @@ Build (CMake)
 - Build server and client: `cmake --build build --config Release`
 
 Usage
-- Run server: `build/Release/server.exe`
-- Run client: `build/Release/client.exe`
+- Run server: `build/server.exe`
+- Run client: `build/client.exe`
 
 Custom
 - O1: Set host and port in folder `config`
-- O2: Run server, client with a argv host eg. `build/Release/client.exe 192.168.10.1`
+- O2: Run server, client with a argv host eg. `build/client.exe 192.168.10.1`
 
 Project Structure
 ```bath

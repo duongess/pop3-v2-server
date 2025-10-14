@@ -5,6 +5,9 @@
 #include <atomic>
 #include "services/tcp.h"
 #include "../config/config.h"
+#include "../common/utils.h"
+#include "server.hpp"
+#include "utils.h"
 
 int main(int argc, char* argv[]) {
   Config::AppConfig cfg = Config::defaultConfig();
@@ -16,6 +19,26 @@ int main(int argc, char* argv[]) {
   if (argc >= 2) {
     host = argv[1];
   }
+
+  Server server = Server(host);
+  std::string username, password;
+  while (true) {
+    if (!server.hasAnyUser()) {
+      std::cout << "Register a server account" << std::endl;
+      std::cout << "Server Name: "; std::getline(std::cin, username);
+      std::cout << "Server Password: "; std::getline(std::cin, password);
+      server.signUp(username, password);
+      std::cout << ___________________ << std::endl;
+    } else {
+      std::cout << "1" << std::endl;
+      std::cout << "Server Name: "; std::getline(std::cin, username);
+      std::cout << "Server Password: "; std::getline(std::cin, password);
+      server.signIn(username, password);
+      break;
+    }
+  }
+
+  server.checkAccout();
 
   auto start_tcp = [&]() {
     if (tcp_running.load()) {
@@ -41,12 +64,9 @@ int main(int argc, char* argv[]) {
     std::cout << "Stopped TCP service\n";
   };
 
+  menuServer();
   // Main loop
   while (true) {
-    std::cout << "\n=== Network System Menu ===\n";
-    std::cout << "1) Start TCP service\n";
-    std::cout << "q) Quit\n> ";
-
     std::string choice;
     if (!std::getline(std::cin, choice)) break;
     if (choice.empty()) continue;
@@ -62,6 +82,7 @@ int main(int argc, char* argv[]) {
       case 'e':
       case 'E':
         stop_tcp_srv();
+        menuServer();
         break;
 
       case 'q':

@@ -1,5 +1,6 @@
 // Networking utilities implementation
 #include "utils.h"
+#include <iostream>
 
 bool net_init() {
 #ifdef _WIN32
@@ -25,4 +26,10 @@ void close_socket(socket_handle_t s) {
 #else
   if (s >= 0) close(s);
 #endif
+}
+
+void menuServer() {
+  std::cout << "\n=== Network System Menu ===\n";
+  std::cout << "1) Start TCP service\n";
+  std::cout << "q) Quit\n> ";
 }

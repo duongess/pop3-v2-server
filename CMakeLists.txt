@@ -13,6 +13,7 @@ add_executable(server
   server/main.cpp
   server/services/tcp.cpp
   server/session.cpp
+  server/server.cpp
   common/protocol.cpp
   common/utils.cpp
 )
