@@ -1,4 +1,4 @@
-#include "server.hpp"
+#include "server.h"
 
 static std::string trim(const std::string& s){
   auto a = s.find_first_not_of(" \t\r\n");

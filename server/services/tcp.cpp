@@ -4,15 +4,15 @@ static std::atomic<bool> g_tcp_stop{false};
 static TCP<std::string> g_server;
 
 int start_tcp(const std::string& host, const std::string& port, int kBufferSize) {
-  std::cout << "[TCP] Starting TCP server on " << host << ":" << port << "...\n";
+  console.log("[TCP] Starting TCP server on ", host, ":", port, "...\n");
 
   g_tcp_stop = false;
   if (!g_server.bindAndListen(host, port)) {
-    std::cerr << "[TCP] Failed to start TCP server\n";
+    console.error("[TCP] Failed to start TCP server");
     return 1;
   }
 
-  std::cout << "[TCP] Server started and listening on port " << port << "\n";
+  console.success("[TCP] Server started and listening on port ", port );
 
   // Vòng lặp chấp nhận client
   char buffer[4096];
@@ -23,30 +23,30 @@ int start_tcp(const std::string& host, const std::string& port, int kBufferSize)
       continue;
     }
 
-    std::cout << "[TCP] Client connected\n";
+    console.success("[TCP] Client connected");
 
     Response<std::string> received = client.receiveData(kBufferSize);
 
     if (received.status == Status::OK) {
-        std::cout << "[TCP] Received: " << received.data << "\n";
+        console.running("[TCP] Received: ", received.data );
         client.sendData("[TCP] Server OK");
     } else {
-        std::cerr << "[TCP] Error: " << received.error << "\n";
+        console.error("[TCP] Error: ", received.error );
     }
 
     client.close();
   }
 
   g_server.clean();
-  std::cout << "[TCP] Server stopped listening\n";
+  console.stopping("[TCP] Server stopped listening");
   return 0;
 }
 
 int stop_tcp() {
-  std::cout << "[TCP] Stopping TCP service...\n";
+  console.warn("[TCP] Stopping TCP service...");
   g_tcp_stop = true;
   TCP<std::string>::requestStop();
   g_server.clean();
-  std::cout << "[TCP] TCP service fully stopped\n";
+  console.stopping("[TCP] TCP service fully stopped\n");
   return 0;
 }

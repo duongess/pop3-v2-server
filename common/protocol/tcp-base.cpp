@@ -52,7 +52,7 @@ bool TCPBase::connectTo(const std::string& host, const std::string& port) {
 
 bool TCPBase::bindAndListen(const std::string& host, const std::string& port) {
     if (!net_init()) {
-        std::cerr << "[TCP] Failed to init networking (WSAStartup)\n";
+        console.error("[TCP] Failed to init networking (WSAStartup)");
         return 1;
     }
 
@@ -71,32 +71,33 @@ bool TCPBase::bindAndListen(const std::string& host, const std::string& port) {
     freeaddrinfo(result);
 
     if (sock == invalid_socket_handle) {
-        std::cerr << "[TCP] Failed to bind socket\n";
+        console.error("[TCP] Failed to bind socket");
         WSACleanup();
         return false;
     }
 
     if (listen(sock, SOMAXCONN) != 0) {
-        std::cerr << "[TCP] listen failed\n";
+        console.error("[TCP] listen failed");
         closesocket(sock);
         WSACleanup();
         return false;
     }
 
-    std::cout << "[TCP] Listening on port " << port << "\n";
+    console.success("[TCP] Listening on port ", port);
     stop_flag = false;
     return true;
 }
 
 bool TCPBase::acceptClient(TCPBase& client) {
-    std::cout << "[DEBUG] accept() on sock=" << this->sock << "\n";
+    if (client.sock != invalid_socket_handle) return true;
+    console.debug("accept() on sock=", this->sock);
     socket_handle_t client_sock = accept(this->sock, nullptr, nullptr);
-    std::cout << "[DEBUG] accept() afef sock=" << client_sock << "\n";
+    console.debug("accept() afef sock=", client_sock);
     if (client_sock == invalid_socket_handle) {
-        std::cerr << "[TCP] accept failed: " << WSAGetLastError() << "\n";
+        console.debug("[TCP] accept failed: ", WSAGetLastError());
         return false;
     }
-    std::cout << "[DEBUG] accept OK, client sock=" << client_sock << "\n";
+    console.success("accept OK, client sock=", client_sock);
     client.sock = client_sock;
     return true;
 }
@@ -112,7 +113,7 @@ void TCPBase::clean() {
         shutdown(this->sock, SD_BOTH);
         this->close();
         this->sock = invalid_socket_handle;
-        std::cout << "[TCP] Socket closed\n";
+        console.stopping("[TCP] Socket closed\n");
     }
     net_cleanup();
 }

@@ -1,9 +1,11 @@
 #include "service-manager.h"
 #include "../config/config.h"
-#include "server.hpp"
+#include "server.h"
 #include "utils.h"
+#include "../common/console.h"
 
 int main(int argc, char* argv[]) {
+  console.reset();
   Config::AppConfig cfg = Config::defaultConfig();
   std::string host = cfg.tcp.hostServer;
   std::string port = cfg.tcp.port;
@@ -27,7 +29,7 @@ int main(int argc, char* argv[]) {
     switch (choice[0]) {
       case '1':
         sm.startTCP(host, port, cfg.tcp.bufferSize);
-        std::cout << "Press e to stop TCP service\n";
+        console.log("Press e to stop TCP service");
         break;
 
       case 'c':
@@ -50,17 +52,18 @@ int main(int argc, char* argv[]) {
 
       case 'q':
       case 'Q':
-        std::cout << "Exiting...\n";
+        console.log("Exiting...");
         sm.cleanup();
         return 0;
 
       default:
-        std::cout << "Unknown option: " << choice << "\n";
-        std::cout << ">> ";
+        console.log("Unknown option: ", choice);
+        console.log(">> ");
         break;
     }
   }
 
   sm.cleanup();
+  console.reset();
   return 0;
 }

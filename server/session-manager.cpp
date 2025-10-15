@@ -1,4 +1,4 @@
-#include "session-manager.hpp"
+#include "session-manager.h"
 
 std::string SessionManager::generateToken_(size_t len) {
     static const char* chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

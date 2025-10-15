@@ -1,5 +1,5 @@
 #include <iostream>
-#include "server.hpp"
+#include "server.h"
 #include "../types/auth.h"
 
 void menuServer();
