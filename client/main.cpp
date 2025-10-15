@@ -4,7 +4,6 @@
 #include <sstream>
 #include "services/tcp.h"
 #include "../config/config.h"
-#include "../common/protocol.h"
 
 int main(int argc, char* argv[]) {
   Config::AppConfig cfg = Config::defaultConfig();
@@ -28,7 +27,7 @@ int main(int argc, char* argv[]) {
         port = cfg.tcp.port;
         std::cout << "Send to server " << host << ":" << port << std::endl;
         std::cout << "messages: "; std::getline(std::cin, messages);
-        int rc = run_tcp_client(host, port, messages);
+        int rc = sendMessage(host, port, messages);
         if (rc != 0) std::cerr << "TCP echo failed" << std::endl;
         break;
       }

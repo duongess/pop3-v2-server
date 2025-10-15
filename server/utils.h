@@ -4,4 +4,5 @@
 
 void menuServer();
 void registerServer(Server &server);
+void joinServer(Server &server);
 void confinPassword();

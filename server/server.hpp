@@ -1,5 +1,4 @@
 #pragma once
-#include "../common/protocol.h"
 #include <cstdio>
 #include <fstream>
 #include <sstream>

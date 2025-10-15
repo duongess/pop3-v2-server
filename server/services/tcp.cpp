@@ -1,107 +1,52 @@
 #include "tcp.h"
 
-static bool set_reuseaddr(socket_handle_t s) {
-  int opt = 1;
-  return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (const char*)&opt, sizeof(opt)) == 0;
-}
-
 static std::atomic<bool> g_tcp_stop{false};
-static socket_handle_t g_listen_socket = invalid_socket_handle;
+static TCP<std::string> g_server;
 
-int start_tcp(const std::string& host, const std::string& port, const int& kBufferSize = 4096) {
+int start_tcp(const std::string& host, const std::string& port, int kBufferSize) {
   std::cout << "[TCP] Starting TCP server on " << host << ":" << port << "...\n";
 
   g_tcp_stop = false;
-  if (!net_init()) {
-    std::cerr << "[TCP] Failed to init networking\n";
+  if (!g_server.bindAndListen(host, port)) {
+    std::cerr << "[TCP] Failed to start TCP server\n";
     return 1;
   }
 
-  addrinfo hints{};
-  hints.ai_family = AF_UNSPEC; // IPv4 or IPv6
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_protocol = IPPROTO_TCP;
-  hints.ai_flags = AI_PASSIVE; // for bind
-
-  addrinfo* result = nullptr;
-  int gai = getaddrinfo(host.c_str(), port.c_str(), &hints, &result);
-  if (gai != 0 || !result) {
-    std::cerr << "[TCP] getaddrinfo failed: " << gai << std::endl;
-    net_cleanup();
-    return 1;
-  }
-
-  socket_handle_t listen_socket = invalid_socket_handle;
-  for (addrinfo* ptr = result; ptr != nullptr; ptr = ptr->ai_next) {
-    listen_socket = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
-    if (listen_socket == invalid_socket_handle) continue;
-    set_reuseaddr(listen_socket);
-    if (bind(listen_socket, ptr->ai_addr, (int)ptr->ai_addrlen) == 0) {
-      break;
-    }
-    close_socket(listen_socket);
-    listen_socket = invalid_socket_handle;
-  }
-  freeaddrinfo(result);
-
-  if (listen_socket == invalid_socket_handle) {
-    std::cerr << "[TCP] Failed to create/bind listening socket\n";
-    net_cleanup();
-    return 1;
-  }
-
-  if (listen(listen_socket, SOMAXCONN) != 0) {
-    std::cerr << "[TCP] listen failed\n";
-    close_socket(listen_socket);
-    net_cleanup();
-    return 1;
-  }
-
-  g_listen_socket = listen_socket;
   std::cout << "[TCP] Server started and listening on port " << port << "\n";
 
-  char buffer[kBufferSize];
+  // Vòng lặp chấp nhận client
+  char buffer[4096];
   while (!g_tcp_stop.load()) {
-    socket_handle_t client = accept(listen_socket, nullptr, nullptr);
-    if (client == invalid_socket_handle) {
-      if (g_tcp_stop.load()) break;
-      std::cerr << "[TCP] accept failed\n";
+    TCP<std::string> client;
+    if (!g_server.acceptClient(client)) {
+      if (TCP<std::string>::shouldStop()) break;
       continue;
     }
+
     std::cout << "[TCP] Client connected\n";
 
-    char buffer[1024];
-    int received = recv(client, buffer, sizeof(buffer) - 1, 0);
-    if (received > 0) {
-      buffer[received] = '\0';
-      std::string message(buffer);
-      std::cout << "[TCP] Received: " << message << std::endl;
-      send(client, message.c_str(), (int)message.size(), 0);
-    } else if (received == 0) {
-      std::cout << "[TCP] Client disconnected (graceful)\n";
+    Response<std::string> received = client.receiveData(kBufferSize);
+
+    if (received.status == Status::OK) {
+        std::cout << "[TCP] Received: " << received.data << "\n";
+        client.sendData("[TCP] Server OK");
     } else {
-      std::cerr << "[TCP] recv failed\n";
+        std::cerr << "[TCP] Error: " << received.error << "\n";
     }
 
-    close_socket(client);
+    client.close();
   }
 
-  if (listen_socket != invalid_socket_handle) close_socket(listen_socket);
-  g_listen_socket = invalid_socket_handle;
-  net_cleanup();
+  g_server.clean();
+  std::cout << "[TCP] Server stopped listening\n";
   return 0;
 }
 
 int stop_tcp() {
   std::cout << "[TCP] Stopping TCP service...\n";
   g_tcp_stop = true;
-
-  if (g_listen_socket != invalid_socket_handle) {
-    shutdown(g_listen_socket, SD_BOTH);
-    close_socket(g_listen_socket);
-    std::cout << "[TCP] Closed listening socket\n";
-  }
-
+  TCP<std::string>::requestStop();
+  g_server.clean();
   std::cout << "[TCP] TCP service fully stopped\n";
   return 0;
 }

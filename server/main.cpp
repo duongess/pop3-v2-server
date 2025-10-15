@@ -1,68 +1,66 @@
-// Entry point for server
-#include <iostream>
-#include <string>
-#include <thread>
-#include <atomic>
-#include "services/tcp.h"
+#include "service-manager.h"
 #include "../config/config.h"
-#include "../common/utils.h"
 #include "server.hpp"
 #include "utils.h"
-#include "../types/services.h"
 
 int main(int argc, char* argv[]) {
   Config::AppConfig cfg = Config::defaultConfig();
+  std::string host = cfg.tcp.hostServer;
+  std::string port = cfg.tcp.port;
 
-  std::thread tcp_thread;
-  Services currentServices;
+  if (argc >= 2) host = argv[1];
 
-  std::string host = cfg.tcp.hostServer, port;
+  Server server(host);
 
-  if (argc >= 2) {
-    host = argv[1];
+  if (!server.hasAnyUser()) {
+    registerServer(server);
   }
 
-  Server server = Server(host);
-  registerServer(server);
-  server.checkAccout();
-
+  ServiceManager sm;
   menuServer();
-  // Main loop
+
   while (true) {
     std::string choice;
     if (!std::getline(std::cin, choice)) break;
     if (choice.empty()) continue;
 
-    char option = choice[0]; // lấy ký tự đầu tiên
-
-    switch (option) {
+    switch (choice[0]) {
       case '1':
-        port = cfg.tcp.port;
-        tcp_thread = std::thread([&]() {
-          start_tcp(host, port, cfg.tcp.bufferSize);
-        });
-        std::cout << "Press e for stop TCP service\n";
-        currentServices = Services::TCP;
+        sm.startTCP(host, port, cfg.tcp.bufferSize);
+        std::cout << "Press e to stop TCP service\n";
+        break;
+
+      case 'c':
+      case 'C':
+        registerServer(server);
+        menuServer();
+        break;
+
+      case 'j':
+      case 'J':
+        joinServer(server);
+        menuServer();
         break;
 
       case 'e':
       case 'E':
-        stop_tcp();
+        sm.stopTCP();
         menuServer();
-        currentServices = Services::NOT;
         break;
 
       case 'q':
       case 'Q':
         std::cout << "Exiting...\n";
-        if (currentServices == Services::TCP) stop_tcp();
+        sm.cleanup();
         return 0;
 
       default:
         std::cout << "Unknown option: " << choice << "\n";
+        std::cout << ">> ";
         break;
     }
   }
 
+  sm.cleanup();
   return 0;
 }
