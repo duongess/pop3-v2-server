@@ -31,7 +31,7 @@ bool TCPBase::connectTo(const std::string& host, const std::string& port) {
             std::cout << "[DEBUG] Connected OK\n";
             break;
         } else {
-            int err = WSAGetLastError();   // 🔥 Lấy error NGAY SAU connect()
+            int err = WSAGetLastError();
             std::cerr << "[DEBUG] Connect failed with code: " << err << "\n";
             close_socket(sock);
             sock = invalid_socket_handle;
