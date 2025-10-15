@@ -14,22 +14,25 @@ bool TCP<T>::sendData(const std::string& data) {
 
 template<typename T>
 Response<T> TCP<T>::receiveData(const size_t& size) {
-    char buffer[size] = {0};
+    std::vector<char> buffer(size);
 
-    ssize_t bytesReceived = recv(sock, buffer, size - 1, 0);
+    int bytesReceived = recv(sock, buffer.data(), (int)buffer.size() - 1, 0);
 
     if (bytesReceived < 0) {
-        std::cerr << "[TCP] Receive error\n";
+        int err = WSAGetLastError();
+        std::cerr << "[TCP] Receive error, code=" << err << "\n";
         return { Status::ServerError, {} };
     }
+
     if (bytesReceived == 0) {
-        std::cerr << "[TCP] Connection closed\n";
+        std::cerr << "[TCP] Connection closed by peer\n";
         return { Status::BadRequest, {} };
     }
 
-    // Chuyển buffer -> T (giả sử T là std::string)
-    T data(buffer, bytesReceived);
+    buffer[bytesReceived] = '\0';
+    T data(buffer.data(), bytesReceived);
     return { Status::OK, data };
 }
+
 
 template class TCP<std::string>;

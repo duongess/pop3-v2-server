@@ -25,11 +25,11 @@ int start_tcp(const std::string& host, const std::string& port, int kBufferSize)
 
     std::cout << "[TCP] Client connected\n";
 
-    Response<std::string> received = g_server.receiveData(kBufferSize);
+    Response<std::string> received = client.receiveData(kBufferSize);
 
     if (received.status == Status::OK) {
         std::cout << "[TCP] Received: " << received.data << "\n";
-        g_server.sendData("[TCP] Server OK");
+        client.sendData("[TCP] Server OK");
     } else {
         std::cerr << "[TCP] Error: " << received.error << "\n";
     }

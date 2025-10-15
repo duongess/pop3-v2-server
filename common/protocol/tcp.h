@@ -1,5 +1,6 @@
 #pragma once
 #include "tcp-base.h"
+#include <vector>
 
 template<typename T>
 class TCP : public TCPBase {
