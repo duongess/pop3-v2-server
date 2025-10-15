@@ -1,10 +1,7 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <cstring>
-#include <atomic>
+#include "../../common/protocol/tcp.h"
 #include "../../common/utils.h"
 
-int start_tcp(const std::string& host, const std::string& port, const int& kBufferSize);
+// API khởi chạy / dừng dịch vụ TCP
+int start_tcp(const std::string& host, const std::string& port, int kBufferSize = 4096);
 int stop_tcp();
-

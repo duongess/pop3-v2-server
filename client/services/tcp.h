@@ -1,7 +1,5 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <cstring>
+#include "../../common/protocol/tcp.h"
 #include "../../common/utils.h"
 
 // Run a single TCP echo interaction:

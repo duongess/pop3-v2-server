@@ -4,7 +4,6 @@
 #include <sstream>
 #include "services/tcp.h"
 #include "../config/config.h"
-#include "../common/protocol.h"
 
 int main(int argc, char* argv[]) {
   Config::AppConfig cfg = Config::defaultConfig();

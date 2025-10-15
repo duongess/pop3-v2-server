@@ -13,16 +13,19 @@ add_executable(server
   server/main.cpp
   server/services/tcp.cpp
   server/session-manager.cpp
+  server/service-manager.cpp
   server/server.cpp
   server/utils.cpp
-  common/protocol.cpp
+  common/protocol/tcp-base.cpp
+  common/protocol/tcp.cpp
   common/utils.cpp
 )
 
 add_executable(client
   client/main.cpp
   client/services/tcp.cpp
-  common/protocol.cpp
+  common/protocol/tcp-base.cpp
+  common/protocol/tcp.cpp
   common/utils.cpp
 )
 

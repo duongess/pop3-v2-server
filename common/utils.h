@@ -8,6 +8,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <string>
+#include <iostream>
 
 using socket_handle_t = SOCKET;
 constexpr socket_handle_t invalid_socket_handle = INVALID_SOCKET;
