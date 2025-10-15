@@ -18,6 +18,7 @@ public:
     bool bindAndListen(const std::string& host, const std::string& port);
     bool acceptClient(TCPBase& client);
     void close();
+    void clean();
 
     static void requestStop();
     static bool shouldStop();

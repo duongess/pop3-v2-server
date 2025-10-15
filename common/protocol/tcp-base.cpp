@@ -13,28 +13,36 @@ TCPBase::~TCPBase() {
 }
 
 bool TCPBase::connectTo(const std::string& host, const std::string& port) {
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        std::cerr << "[TCP] Failed to init Winsock\n";
-        return false;
+    if (!net_init()) {
+        std::cerr << "[TCP] Failed to init networking (WSAStartup)\n";
+        return 1;
     }
 
-    addrinfo* result = resolveAddress(host, port, true);
+    addrinfo* result = resolveAddress(host, port, false);
 
     for (addrinfo* ptr = result; ptr != nullptr; ptr = ptr->ai_next) {
         sock = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
-        if (sock == INVALID_SOCKET) continue;
+        if (sock == invalid_socket_handle) continue;
 
-        if (connect(sock, ptr->ai_addr, (int)ptr->ai_addrlen) == 0) break;
+        std::cout << "[DEBUG] Trying connect... " << host << ":" << port << "\n";
 
-        closesocket(sock);
-        sock = INVALID_SOCKET;
+        int ret = connect(sock, ptr->ai_addr, (int)ptr->ai_addrlen);
+        if (ret == 0) {
+            std::cout << "[DEBUG] Connected OK\n";
+            break;
+        } else {
+            int err = WSAGetLastError();   // 🔥 Lấy error NGAY SAU connect()
+            std::cerr << "[DEBUG] Connect failed with code: " << err << "\n";
+            close_socket(sock);
+            sock = invalid_socket_handle;
+        }
     }
+
     freeaddrinfo(result);
 
-    if (sock == INVALID_SOCKET) {
+    if (sock == invalid_socket_handle) {
         std::cerr << "[TCP] Unable to connect to server\n";
-        WSACleanup();
+        net_cleanup();
         return false;
     }
 
@@ -43,27 +51,26 @@ bool TCPBase::connectTo(const std::string& host, const std::string& port) {
 }
 
 bool TCPBase::bindAndListen(const std::string& host, const std::string& port) {
-    WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        std::cerr << "[TCP] Failed to init Winsock\n";
-        return false;
+    if (!net_init()) {
+        std::cerr << "[TCP] Failed to init networking (WSAStartup)\n";
+        return 1;
     }
 
     addrinfo* result = resolveAddress(host, port, true);
 
     for (addrinfo* ptr = result; ptr != nullptr; ptr = ptr->ai_next) {
         sock = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
-        if (sock == INVALID_SOCKET) continue;
+        if (sock == invalid_socket_handle) continue;
 
         set_reuseaddr(sock);
         if (bind(sock, ptr->ai_addr, (int)ptr->ai_addrlen) == 0) break;
 
         closesocket(sock);
-        sock = INVALID_SOCKET;
+        sock = invalid_socket_handle;
     }
     freeaddrinfo(result);
 
-    if (sock == INVALID_SOCKET) {
+    if (sock == invalid_socket_handle) {
         std::cerr << "[TCP] Failed to bind socket\n";
         WSACleanup();
         return false;
@@ -82,27 +89,32 @@ bool TCPBase::bindAndListen(const std::string& host, const std::string& port) {
 }
 
 bool TCPBase::acceptClient(TCPBase& client) {
-    sockaddr_in client_addr{};
-    int addr_size = sizeof(client_addr);
-    SOCKET client_sock = accept(sock, (sockaddr*)&client_addr, &addr_size);
-    if (client_sock == INVALID_SOCKET) {
-        if (shouldStop()) return false;
-        std::cerr << "[TCP] accept failed\n";
+    std::cout << "[DEBUG] accept() on sock=" << this->sock << "\n";
+    socket_handle_t client_sock = accept(this->sock, nullptr, nullptr);
+    std::cout << "[DEBUG] accept() afef sock=" << client_sock << "\n";
+    if (client_sock == invalid_socket_handle) {
+        std::cerr << "[TCP] accept failed: " << WSAGetLastError() << "\n";
         return false;
     }
+    std::cout << "[DEBUG] accept OK, client sock=" << client_sock << "\n";
     client.sock = client_sock;
-    std::cout << "[TCP] Client connected\n";
     return true;
 }
 
+
+
 void TCPBase::close() {
-    if (sock != INVALID_SOCKET) {
-        shutdown(sock, SD_BOTH);
-        closesocket(sock);
-        sock = INVALID_SOCKET;
+    close_socket(this->sock);
+}
+
+void TCPBase::clean() {
+    if (this->sock != invalid_socket_handle) {
+        shutdown(this->sock, SD_BOTH);
+        this->close();
+        this->sock = invalid_socket_handle;
         std::cout << "[TCP] Socket closed\n";
     }
-    WSACleanup();
+    net_cleanup();
 }
 
 void TCPBase::requestStop() {

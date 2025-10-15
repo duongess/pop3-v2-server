@@ -37,7 +37,7 @@ int start_tcp(const std::string& host, const std::string& port, int kBufferSize)
     client.close();
   }
 
-  g_server.close();
+  g_server.clean();
   std::cout << "[TCP] Server stopped listening\n";
   return 0;
 }
@@ -46,7 +46,7 @@ int stop_tcp() {
   std::cout << "[TCP] Stopping TCP service...\n";
   g_tcp_stop = true;
   TCP<std::string>::requestStop();
-  g_server.close();
+  g_server.clean();
   std::cout << "[TCP] TCP service fully stopped\n";
   return 0;
 }
