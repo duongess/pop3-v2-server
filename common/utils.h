@@ -10,9 +10,11 @@
 #include <ws2tcpip.h>
 #include <string>
 #include <iostream>
+#include "console.h"
 
 using socket_handle_t = SOCKET;
 constexpr socket_handle_t invalid_socket_handle = INVALID_SOCKET;
+const Console console;
 
 bool net_init();
 void net_cleanup();

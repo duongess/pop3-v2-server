@@ -2,7 +2,7 @@
 
 void ServiceManager::startTCP(const std::string& host, const std::string& port, int bufferSize) {
     if (running) {
-        std::cout << "[WARN] TCP service already running.\n";
+        console.warn("service already running.");
         return;
     }
 
@@ -15,16 +15,16 @@ void ServiceManager::startTCP(const std::string& host, const std::string& port, 
         current = Services::NOT;
     });
 
-    std::cout << "[INFO] TCP service started.\n";
+    console.stopping("TCP service started.");
 }
 
 void ServiceManager::stopTCP() {
     if (!running) {
-        std::cout << "[WARN] TCP service is not running.\n";
+        console.warn("TCP service is not running.");
         return;
     }
 
-    std::cout << "[INFO] Stopping TCP service...\n";
+    console.stopping("Stopping TCP service...");
     stop_tcp();
 
     if (worker.joinable())
@@ -32,7 +32,7 @@ void ServiceManager::stopTCP() {
 
     running = false;
     current = Services::NOT;
-    std::cout << "[INFO] TCP service stopped.\n";
+    console.stopping("TCP service stopped.");
 }
 
 void ServiceManager::cleanup() {

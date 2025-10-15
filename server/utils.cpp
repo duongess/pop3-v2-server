@@ -2,7 +2,7 @@
 
 
 void menuServer() {
-    std::cout << "\n=== Network System Menu ===\n";
+    console.log(COLOR::GREEN, "\n=== Network System Menu ===\n");
     std::cout << "1) Start TCP service\n";
     std::cout << "c) Create account\n";
     std::cout << "j) Join account\n";

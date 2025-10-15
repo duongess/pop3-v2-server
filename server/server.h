@@ -10,7 +10,7 @@
 #include <string>
 #include <mutex>
 #include "../common/utils.h"
-#include "session-manager.hpp"
+#include "session-manager.h"
 #include "../types/auth.h"
 
 class Server {

@@ -5,23 +5,23 @@ int sendMessage(const std::string& host, const std::string& port, const std::str
 
   // 1️⃣ Kết nối đến server
   if (!client.connectTo(host, port)) {
-    std::cerr << "❌ Failed to connect to " << host << ":" << port << "\n";
+    console.error("[TCP] Failed to connect to ", host, ":", port);
     return 1;
   }
-  std::cout << "✅ Connected to " << host << ":" << port << "\n";
+  console.success("[TCP] Connected to ", host, ":", port);
 
   // 2️⃣ Gửi dữ liệu
   if (!client.sendData(message)) {
-    std::cerr << "❌ Send failed.\n";
+    console.error("[TCP] Send failed.");
     client.close();
     return 1;
   }
-  std::cout << "📤 Sent: " << message << "\n";
+  console.info("[TCP] Sent: ", message);
 
   // 3️⃣ Nhận phản hồi (nếu có)
   Response<std::string> response = client.receiveData();
   if (response.status == Status::OK) {
-    std::cout << "📥 Received: " << response.data << "\n";
+    console.info("[TCP] Received: ", response.data);
   }
 
   // 4️⃣ Đóng kết nối
