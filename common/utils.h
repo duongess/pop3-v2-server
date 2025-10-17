@@ -11,6 +11,7 @@
 #include <string>
 #include <iostream>
 #include "console.h"
+using namespace std;
 
 using socket_handle_t = SOCKET;
 constexpr socket_handle_t invalid_socket_handle = INVALID_SOCKET;
