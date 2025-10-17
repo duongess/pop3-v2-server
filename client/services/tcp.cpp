@@ -1,7 +1,7 @@
 #include "tcp.h"
 
-int sendMessage(const std::string& host, const std::string& port, const std::string& message) {
-  TCP<std::string> client;
+int sendMessage(const string& host, const string& port, const string& message) {
+  TCP<string> client;
 
   // 1️⃣ Kết nối đến server
   if (!client.connectTo(host, port)) {
@@ -19,7 +19,7 @@ int sendMessage(const std::string& host, const std::string& port, const std::str
   console.info("[TCP] Sent: ", message);
 
   // 3️⃣ Nhận phản hồi (nếu có)
-  Response<std::string> response = client.receiveData();
+  Response<string> response = client.receiveData();
   if (response.status == Status::OK) {
     console.info("[TCP] Received: ", response.data);
   }

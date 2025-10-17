@@ -7,8 +7,8 @@
 int main(int argc, char* argv[]) {
   console.reset();
   Config::AppConfig cfg = Config::defaultConfig();
-  std::string host = cfg.tcp.hostServer;
-  std::string port = cfg.tcp.port;
+  string host = cfg.tcp.hostServer;
+  string port = cfg.tcp.port;
 
   if (argc >= 2) host = argv[1];
 
@@ -22,8 +22,8 @@ int main(int argc, char* argv[]) {
   menuServer();
 
   while (true) {
-    std::string choice;
-    if (!std::getline(std::cin, choice)) break;
+    string choice;
+    if (!getline(cin, choice)) break;
     if (choice.empty()) continue;
 
     switch (choice[0]) {

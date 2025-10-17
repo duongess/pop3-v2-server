@@ -10,12 +10,12 @@
 class ServiceManager {
   private:
     Services current = Services::NOT;
-    std::thread worker;
-    std::atomic<bool> running = false;
+    thread worker;
+    atomic<bool> running = false;
   
   public:
     // Khai báo các hàm public
-    void startTCP(const std::string& host, const std::string& port, int bufferSize);
+    void startTCP(const string& host, const string& port, int bufferSize);
     void stopTCP();
     void cleanup();
 };

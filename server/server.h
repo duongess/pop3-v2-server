@@ -15,40 +15,40 @@
 
 class Server {
 public:
-  Server(std::string host): host_(host) {};
+  Server(string host): host_(host) {};
 
-  bool start(std::string port);
-  bool hasUser(const std::string& username) const;
+  bool start(string port);
+  bool hasUser(const string& username) const;
   bool hasAnyUser() const;
   void checkAccout() const;
 
   void shutdown();
   // auth
-  AuthResult signUp(const std::string& username, const std::string& password);
-  AuthResult signIn(const std::string& username, const std::string& password);
-  void verify(const std::string& username, const std::string& password, const std::string& host, const socket_handle_t& socket_fd);
+  AuthResult signUp(const string& username, const string& password);
+  AuthResult signIn(const string& username, const string& password);
+  void verify(const string& username, const string& password, const string& host, const socket_handle_t& socket_fd);
 
   // broadcast tiện dùng
-  void broadcastFrom(Session* who, const std::string& text);
+  void broadcastFrom(Session* who, const string& text);
 
 private:
   socket_handle_t listen_fd_ = INVALID_SOCKET;
-  std::string host_;
-  std::string currentName_;
+  string host_;
+  string currentName_;
 
   // Kết nối
   SessionManager sessionManager_;
 
   // Users (đơn giản cho đồ án): username -> passwordHash
-  mutable std::mutex users_mu_;
-  std::unordered_map<std::string, std::string> users_;
+  mutable mutex users_mu_;
+  unordered_map<string, string> users_;
 
   // Tiện ích
-  std::string hashPassword(const std::string& pw) const;
+  string hashPassword(const string& pw) const;
 
   // Lưu/đọc file (tuỳ chọn, có thể bỏ nếu chỉ demo in-memory)
-  void loadUsersFromFile(const std::string& path = "users.db");
-  void saveUsersToFile(const std::string& path = "users.db") const;
+  void loadUsersFromFile(const string& path = "users.db");
+  void saveUsersToFile(const string& path = "users.db") const;
 
   void onAccept(socket_handle_t fd);
 };

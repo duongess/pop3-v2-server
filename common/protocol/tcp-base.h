@@ -8,14 +8,14 @@
 class TCPBase {
 protected:
     socket_handle_t sock = invalid_socket_handle;
-    static std::atomic<bool> stop_flag;
+    static atomic<bool> stop_flag;
 
 public:
     TCPBase() = default;
     virtual ~TCPBase();
 
-    bool connectTo(const std::string& host, const std::string& port);
-    bool bindAndListen(const std::string& host, const std::string& port);
+    bool connectTo(const string& host, const string& port);
+    bool bindAndListen(const string& host, const string& port);
     bool acceptClient(TCPBase& client);
     void close();
     void clean();

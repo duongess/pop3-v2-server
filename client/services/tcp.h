@@ -4,5 +4,5 @@
 
 // Run a single TCP echo interaction:
 // connects to host:port, sends message, prints echo, then exits.
-int sendMessage(const std::string&  host, const std::string&  port, const std::string& message);
+int sendMessage(const string&  host, const string&  port, const string& message);
 

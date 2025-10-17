@@ -1,6 +1,6 @@
 #include "tcp-base.h"
 
-std::atomic<bool> TCPBase::stop_flag{false};
+atomic<bool> TCPBase::stop_flag{false};
 
 // helper
 static bool set_reuseaddr(socket_handle_t s) {
@@ -12,9 +12,9 @@ TCPBase::~TCPBase() {
     close();
 }
 
-bool TCPBase::connectTo(const std::string& host, const std::string& port) {
+bool TCPBase::connectTo(const string& host, const string& port) {
     if (!net_init()) {
-        std::cerr << "[TCP] Failed to init networking (WSAStartup)\n";
+        cerr << "[TCP] Failed to init networking (WSAStartup)\n";
         return 1;
     }
 
@@ -24,15 +24,15 @@ bool TCPBase::connectTo(const std::string& host, const std::string& port) {
         sock = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
         if (sock == invalid_socket_handle) continue;
 
-        std::cout << "[DEBUG] Trying connect... " << host << ":" << port << "\n";
+        cout << "[DEBUG] Trying connect... " << host << ":" << port << "\n";
 
         int ret = connect(sock, ptr->ai_addr, (int)ptr->ai_addrlen);
         if (ret == 0) {
-            std::cout << "[DEBUG] Connected OK\n";
+            cout << "[DEBUG] Connected OK\n";
             break;
         } else {
             int err = WSAGetLastError();
-            std::cerr << "[DEBUG] Connect failed with code: " << err << "\n";
+            cerr << "[DEBUG] Connect failed with code: " << err << "\n";
             close_socket(sock);
             sock = invalid_socket_handle;
         }
@@ -41,16 +41,16 @@ bool TCPBase::connectTo(const std::string& host, const std::string& port) {
     freeaddrinfo(result);
 
     if (sock == invalid_socket_handle) {
-        std::cerr << "[TCP] Unable to connect to server\n";
+        cerr << "[TCP] Unable to connect to server\n";
         net_cleanup();
         return false;
     }
 
-    std::cout << "[TCP] Connected to " << host << ":" << port << "\n";
+    cout << "[TCP] Connected to " << host << ":" << port << "\n";
     return true;
 }
 
-bool TCPBase::bindAndListen(const std::string& host, const std::string& port) {
+bool TCPBase::bindAndListen(const string& host, const string& port) {
     if (!net_init()) {
         console.error("[TCP] Failed to init networking (WSAStartup)");
         return 1;

@@ -1,9 +1,9 @@
 #include "tcp.h"
 
-static std::atomic<bool> g_tcp_stop{false};
-static TCP<std::string> g_server;
+static atomic<bool> g_tcp_stop{false};
+static TCP<string> g_server;
 
-int start_tcp(const std::string& host, const std::string& port, int kBufferSize) {
+int start_tcp(const string& host, const string& port, int kBufferSize) {
   console.log("[TCP] Starting TCP server on ", host, ":", port, "...\n");
 
   g_tcp_stop = false;
@@ -17,15 +17,15 @@ int start_tcp(const std::string& host, const std::string& port, int kBufferSize)
   // Vòng lặp chấp nhận client
   char buffer[4096];
   while (!g_tcp_stop.load()) {
-    TCP<std::string> client;
+    TCP<string> client;
     if (!g_server.acceptClient(client)) {
-      if (TCP<std::string>::shouldStop()) break;
+      if (TCP<string>::shouldStop()) break;
       continue;
     }
 
     console.success("[TCP] Client connected");
 
-    Response<std::string> received = client.receiveData(kBufferSize);
+    Response<string> received = client.receiveData(kBufferSize);
 
     if (received.status == Status::OK) {
         console.running("[TCP] Received: ", received.data );
@@ -45,7 +45,7 @@ int start_tcp(const std::string& host, const std::string& port, int kBufferSize)
 int stop_tcp() {
   console.warn("[TCP] Stopping TCP service...");
   g_tcp_stop = true;
-  TCP<std::string>::requestStop();
+  TCP<string>::requestStop();
   g_server.clean();
   console.stopping("[TCP] TCP service fully stopped\n");
   return 0;

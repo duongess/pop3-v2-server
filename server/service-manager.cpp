@@ -1,6 +1,6 @@
 #include "service-manager.h"
 
-void ServiceManager::startTCP(const std::string& host, const std::string& port, int bufferSize) {
+void ServiceManager::startTCP(const string& host, const string& port, int bufferSize) {
     if (running) {
         console.warn("service already running.");
         return;
@@ -9,7 +9,7 @@ void ServiceManager::startTCP(const std::string& host, const std::string& port, 
     running = true;
     current = Services::TCP;
 
-    worker = std::thread([&, host, port, bufferSize]() {
+    worker = thread([&, host, port, bufferSize]() {
         start_tcp(host, port, bufferSize);  // <-- Gọi sang tcp.cpp
         running = false;
         current = Services::NOT;

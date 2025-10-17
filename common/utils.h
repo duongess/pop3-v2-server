@@ -20,5 +20,5 @@ const Console console;
 bool net_init();
 void net_cleanup();
 void close_socket(socket_handle_t s);
-addrinfo* resolveAddress(const std::string& host, const std::string& port, bool passive);
+addrinfo* resolveAddress(const string& host, const string& port, bool passive);
 

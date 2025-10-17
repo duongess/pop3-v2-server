@@ -13,21 +13,21 @@ public:
     ~SessionManager();
 
     // Trả về token nếu tạo thành công
-    void createSessionFor(const std::string& username, const std::string& host, const socket_handle_t& socket_fd);
+    void createSessionFor(const string& username, const string& host, const socket_handle_t& socket_fd);
 
     // Tìm session từ token
-    Session getSessionByToken(const std::string& token);
+    Session getSessionByToken(const string& token);
 
     // Update lastActive (touch)
-    void touchSession(const std::string& token);
+    void touchSession(const string& token);
 
     // Xoá session
-    void removeSession(const std::string& token);
+    void removeSession(const string& token);
     void removeSessionBySocket(int socket_fd);
 
 private:
-    std::string generateToken_(size_t len = 32);
+    string generateToken_(size_t len = 32);
 
-    mutable std::mutex mu_;
-    std::unordered_map<std::string, Session> sessionsByToken_; // token -> Session
+    mutable mutex mu_;
+    unordered_map<string, Session> sessionsByToken_; // token -> Session
 };

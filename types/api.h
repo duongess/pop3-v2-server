@@ -22,7 +22,7 @@ struct Response {
     Status status;
     // PROTOCOL protocol;
     T data;
-    std::string error = "";
+    string error = "";
 };
 
 

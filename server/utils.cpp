@@ -3,34 +3,34 @@
 
 void menuServer() {
     console.log(COLOR::GREEN, "\n=== Network System Menu ===\n");
-    std::cout << "1) Start TCP service\n";
-    std::cout << "c) Create account\n";
-    std::cout << "j) Join account\n";
-    std::cout << "q) Quit\n> ";
+    cout << "1) Start TCP service\n";
+    cout << "c) Create account\n";
+    cout << "j) Join account\n";
+    cout << "q) Quit\n> ";
     return;
 }
 
 void registerServer(Server &server) {
-    std::string username, password;
-    std::cout << "Register a server account" << std::endl;
-    std::cout << "Server Name: "; std::getline(std::cin, username);
-    std::cout << "Server Password: "; std::getline(std::cin, password);
+    string username, password;
+    cout << "Register a server account" << endl;
+    cout << "Server Name: "; getline(cin, username);
+    cout << "Server Password: "; getline(cin, password);
     server.signUp(username, password);
 }
 
 void joinServer(Server &server) {
-    std::string username, password;
-    std::cout << "Log in: " << std::endl;
-    std::cout << "Server Name: "; std::getline(std::cin, username);
-    std::cout << "Server Password: "; std::getline(std::cin, password);
+    string username, password;
+    cout << "Log in: " << endl;
+    cout << "Server Name: "; getline(cin, username);
+    cout << "Server Password: "; getline(cin, password);
     AuthResult status = server.signIn(username, password);
     switch (status) {
         case AuthResult::Ok :
-            std::cout << "Log in OK " << std::endl;
+            cout << "Log in OK " << endl;
             return;
         case AuthResult::UserNotFound:
         case AuthResult::WrongPassword:
-            std::cout << "Log in failure " << std::endl;
+            cout << "Log in failure " << endl;
             break;
     }
     server.checkAccout();

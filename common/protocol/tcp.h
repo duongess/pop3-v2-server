@@ -5,6 +5,6 @@
 template<typename T>
 class TCP : public TCPBase {
 public:
-    bool sendData(const std::string& data);
+    bool sendData(const string& data);
     Response<T> receiveData(const size_t& size = 1024);
 };
