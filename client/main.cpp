@@ -27,8 +27,8 @@ int main(int argc, char* argv[]) {
         port = cfg.tcp.port;
         cout << "Send to server " << host << ":" << port << endl;
         cout << "messages: "; getline(cin, messages);
-        int rc = sendMessage(host, port, messages);
-        if (rc != 0) cerr << "TCP echo failed" << endl;
+        string rc = sendMessage(host, port, messages);
+        if (!rc) cerr << "TCP echo failed" << endl;
         break;
       }
       case 'q':

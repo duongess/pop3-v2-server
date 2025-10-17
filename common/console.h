@@ -6,7 +6,6 @@
 #include <sstream>
 #include <utility>
 #include "../types/color.h"
-using namespace std;
 
 
 class Console {

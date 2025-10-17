@@ -24,6 +24,7 @@ add_executable(server
 add_executable(client
   client/main.cpp
   client/services/tcp.cpp
+  clinet/clinet.cpp
   common/protocol/tcp-base.cpp
   common/protocol/tcp.cpp
   common/utils.cpp

@@ -1,12 +1,12 @@
 #include "tcp.h"
 
-int sendMessage(const string& host, const string& port, const string& message) {
+string sendMessage(const string& host, const string& port, const string& message) {
   TCP<string> client;
 
   // 1️⃣ Kết nối đến server
   if (!client.connectTo(host, port)) {
     console.error("[TCP] Failed to connect to ", host, ":", port);
-    return 1;
+    return "";
   }
   console.success("[TCP] Connected to ", host, ":", port);
 
@@ -14,17 +14,20 @@ int sendMessage(const string& host, const string& port, const string& message) {
   if (!client.sendData(message)) {
     console.error("[TCP] Send failed.");
     client.close();
-    return 1;
+    return "";
   }
   console.info("[TCP] Sent: ", message);
 
   // 3️⃣ Nhận phản hồi (nếu có)
   Response<string> response = client.receiveData();
   if (response.status == Status::OK) {
+    if (response.data = "") {
+      
+    }
     console.info("[TCP] Received: ", response.data);
+    client.close();
+    return response.data;
   }
-
-  // 4️⃣ Đóng kết nối
-  client.close();
-  return 0;
+  console.warn("[TCP] Server not return");
+  return "";
 }

@@ -17,11 +17,9 @@ enum class Status : int {
 //     TCP
 // };
 
-template<typename T>
 struct Response {
     Status status;
-    // PROTOCOL protocol;
-    T data;
+    string data;
     string error = "";
 };
 
