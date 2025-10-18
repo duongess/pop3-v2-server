@@ -46,7 +46,7 @@ void ServiceManager::startPop3V2(const std::string& host, const std::string& por
         runPop3V2(host, port, bufferSize);
         running = false;
         current = Services::NOT;
-    })
+    });
     console.stopping("Pop3 V2 service started.");
 }
 
@@ -70,6 +70,17 @@ void ServiceManager::endPop3V2() {
 void ServiceManager::cleanup() {
     if (running && worker.joinable()) {
         endTCP();
+        endPop3V2();
         worker.join();
+    }
+}
+
+void ServiceManager::resumeIfSelected() {
+    if (current == Services::NOT) {
+        console.log("");
+    } else if (current == Services::TCP) {
+        console.log("Running TCP\n");
+    } else if (current == Services::POP3V2) {
+        console.log("Running POP3V2\n");
     }
 }

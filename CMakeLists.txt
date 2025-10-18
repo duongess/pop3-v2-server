@@ -12,6 +12,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/client)
 add_executable(server
   server/main.cpp
   server/services/tcp.cpp
+  server/services/pop3-v2.cpp
   server/session-manager.cpp
   server/service-manager.cpp
   server/server.cpp

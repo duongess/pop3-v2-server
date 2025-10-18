@@ -14,10 +14,6 @@ int main(int argc, char* argv[]) {
 
   Server server(host);
 
-  if (!server.hasAnyUser()) {
-    registerServer(server);
-  }
-
   ServiceManager sm;
   menuServer();
 
@@ -31,11 +27,21 @@ int main(int argc, char* argv[]) {
         sm.startTCP(host, port, cfg.tcp.bufferSize);
         console.log("Press e to stop TCP service");
         break;
+      
+      case '2':
+        if (!server.hasAnyUser()) {
+          registerServer(server);
+        }
+        port = cfg.pop3V2.port;
+        sm.startPop3V2(host, port, cfg.pop3V2.bufferSize);
+        menuServer();
+        break;
 
       case 'c':
       case 'C':
         registerServer(server);
         menuServer();
+        sm.resumeIfSelected();
         break;
 
       case 'j':
@@ -47,6 +53,7 @@ int main(int argc, char* argv[]) {
       case 'e':
       case 'E':
         sm.endTCP();
+        sm.endPop3V2();
         menuServer();
         break;
 

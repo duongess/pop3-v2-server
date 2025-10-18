@@ -4,6 +4,7 @@
 void menuServer() {
     console.log(COLOR::GREEN, "\n=== Network System Menu ===\n");
     std::cout << "1) Start TCP service\n";
+    std::cout << "2) Start Pop3 V2 service\n";
     std::cout << "c) Create account\n";
     std::cout << "j) Join account\n";
     std::cout << "q) Quit\n> ";
@@ -15,7 +16,14 @@ void registerServer(Server &server) {
     std::cout << "Register a server account" << std::endl;
     std::cout << "Server Name: "; std::getline(std::cin, username);
     std::cout << "Server Password: "; std::getline(std::cin, password);
-    server.signUp(username, password);
+    AuthResult status = server.signUp(username, password);
+    switch (status) {
+        case AuthResult::Ok:
+            std::cout << "Register successful" << std::endl;
+            return;
+        case AuthResult::AlreadyExists: 
+            console.log("Account AlreadyExists");
+    }
 }
 
 void joinServer(Server &server) {

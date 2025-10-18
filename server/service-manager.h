@@ -21,4 +21,6 @@ class ServiceManager {
     void startPop3V2(const std::string& host, const std::string& port, int bufferSize);
     void endPop3V2();
     void cleanup();
+
+    void resumeIfSelected();
 };
