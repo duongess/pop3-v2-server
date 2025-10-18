@@ -12,6 +12,8 @@ class Client {
         std::string token;
         Protocol client;
         std::string request(const std::string& message);
+        bool connect();
+        void close();
     public:
         void setIp(const std::string& host, const std::string& port) {
             this->host = host;

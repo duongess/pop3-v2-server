@@ -1,6 +1,7 @@
 #pragma once
 #include "utils.h"
 #include "../types/response.h"
+#include "../types/auth.h"
 
 class Protocol {
 protected:
@@ -8,11 +9,13 @@ protected:
     static std::atomic<bool> stop_flag;
 
 public:
+    AuthSession sess;
     Protocol() = default;
     virtual ~Protocol();
     socket_handle_t getSocket(){return this->sock;}
 
     bool connectTo(const std::string& host, const std::string& port);
+    bool isConnected();
     bool bindAndListen(const std::string& host, const std::string& port);
     bool acceptClient(Protocol& client);
     void close();

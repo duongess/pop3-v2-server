@@ -1,52 +1,35 @@
 #include "client.h"
 
-std::string Client::request(const std::string& message) {
-    // 1️⃣ Kết nối đến server
-    if (!this->client.connectTo(this->host, this->port)) {
-        console.error("[TCP] Failed to connect to ", this->host, ":", this->port);
-        return "";
+bool Client::connect() {
+    if (client.isConnected()) return true;
+    if (!client.connectTo(host, port)) {
+        console.error("[TCP] Failed to connect to ", host, ":", port);
+        return false;
     }
-    console.success("[TCP] Connected to ", this->host, ":", this->port);
+    console.success("[TCP] Connected to ", host, ":", port);
+    return true;
+}
 
-    // 2️⃣ Gửi dữ liệu
-    if (!this->client.sendData(message)) {
+void Client::close() { client.close(); }
+
+std::string Client::request(const std::string& message) {
+    // KHÔNG connectTo ở đây nữa
+    if (!client.isConnected()) {
+        this->connect();
+    }
+
+    if (!client.sendData(message)) {
         console.error("[TCP] Send failed.");
-        this->client.close();
         return "";
     }
     console.info("[TCP] Sent: ", message);
 
-    // 3️⃣ Nhận phản hồi (nếu có)
-    Response response = this->client.receiveData();
-    switch (response.status) {
-    case Status::OK:
-    case Status::Continue: {
+    Response response = client.receiveData();
+    if (response.status == Status::OK || response.status == Status::Continue) {
         console.info("[TCP] Received: ", response.data);
-
-        if (response.status == Status::OK) {
-            // Hoàn tất phiên/đợt trao đổi hiện tại
-            this->client.close();
-        } else { // Status::Continue
-            // Server vẫn OK nhưng cần lệnh kế tiếp (ví dụ sau USER thì gửi PASS)
-            console.info("[TCP] Continue: awaiting next command...");
-            // KHÔNG close(), cứ return để caller gửi lệnh tiếp theo
-        }
         return response.data;
     }
-
-    case Status::BadRequest:
-    case Status::ServerError:
-    case Status::Redirect:
-    default:
-        // tuỳ bạn muốn log/throw gì ở đây
-        console.error("[TCP] Error status: ", static_cast<int>(response.status),
-                    " - ", response.error);
-        break;
-    }
-
-
-    // 4️⃣ Đóng kết nối
-    this->client.close();
+    console.error("[TCP] Error status: ", (int)response.status, " - ", response.error);
     return "";
 }
 

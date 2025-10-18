@@ -50,6 +50,10 @@ bool Protocol::connectTo(const std::string& host, const std::string& port) {
     return true;
 }
 
+bool Protocol::isConnected() {
+    return sock != invalid_socket_handle && stop_flag == false;
+}
+
 bool Protocol::bindAndListen(const std::string& host, const std::string& port) {
     if (!net_init()) {
         console.error("[TCP] Failed to init networking (WSAStartup)");
@@ -139,9 +143,9 @@ bool Protocol::sendData(const std::string& data) {
 
 Response Protocol::receiveData(const size_t& size) {
     std::vector<char> buffer(size);
-
-    int bytesReceived = recv(sock, buffer.data(), (int)buffer.size() - 1, 0);
-
+    console.debug(123);
+    int bytesReceived = recv(sock, buffer.data(), (int)buffer.size(), 0);
+    console.debug(456);
     if (bytesReceived < 0) {
         int err = WSAGetLastError();
         std::cerr << "[TCP] Receive error, code=" << err << "\n";

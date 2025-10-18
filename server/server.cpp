@@ -78,7 +78,7 @@ bool Server::start(std::string port){
   return true;
 }
 
-bool Server::hasUser(const std::string& username) const {
+bool Server::hasUser(const std::string& username) {
   std::lock_guard<std::mutex> lk(users_mu_);
   return users_.find(username) != users_.end();
 }
