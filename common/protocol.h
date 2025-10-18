@@ -1,6 +1,6 @@
 #pragma once
 #include "utils.h"
-#include "../../types/api.h"
+#include "../types/api.h"
 
 class Protocol {
 protected:
@@ -20,9 +20,6 @@ public:
     static void requestStop();
     static bool shouldStop();
     
-    std::string request(const std::string& message);
-
-private:
     bool sendData(const std::string& data);
     Response receiveData(const size_t& size = 1024);
 };

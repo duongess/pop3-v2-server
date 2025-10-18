@@ -1,5 +1,5 @@
 #pragma once
-#include "../../common/protocol/tcp.h"
+#include "../../common/protocol.h"
 #include "../../common/utils.h"
 
 // API khởi chạy / dừng dịch vụ TCP

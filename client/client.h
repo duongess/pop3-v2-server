@@ -13,4 +13,4 @@ class Client {
             this->port = port;
         }
         std::string request(const std::string& message);
-}
+};
