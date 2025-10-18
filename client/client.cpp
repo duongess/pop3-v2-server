@@ -28,3 +28,10 @@ std::string Client::request(const std::string& message) {
     this->client.close();
     return "";
 }
+
+void Client::sendText(const std::string& message) {
+    this->request(message);
+};
+void Client::sendPopv2(const std::string& message) {
+    
+}

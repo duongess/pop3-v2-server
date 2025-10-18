@@ -7,10 +7,13 @@ class Client {
         std::string port;
         std::string token;
         Protocol client;
+        std::string request(const std::string& message);
     public:
-        Client(const std::string& host, const std::string& port) {
+        void setIp(const std::string& host, const std::string& port) {
             this->host = host;
             this->port = port;
         }
-        std::string request(const std::string& message);
+
+        void sendText(const std::string& message);
+        void sendPopv2(const std::string& message);
 };
