@@ -1,6 +1,6 @@
 #pragma once
 #include "utils.h"
-#include "../types/api.h"
+#include "../types/response.h"
 
 class Protocol {
 protected:

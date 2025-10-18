@@ -1,5 +1,9 @@
 #include "../common/utils.h"
+#include "utils.h"
 #include "../common/protocol.h"
+#include "../types/request.h"
+#include "../types/clientInput.h"
+using pop::RequestPopV2;
 
 class Client {
     private:

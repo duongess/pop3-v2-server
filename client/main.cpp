@@ -24,14 +24,16 @@ int main(int argc, char* argv[]) {
         port = cfg.tcp.port;
         std::cout << "Send to server " << host << ":" << port << std::endl;
         std::cout << "messages: "; std::getline(std::cin, messages);
-        client.setIp()
+        // client.setIp();
         break;
       }
       case '2': {
+        port = cfg.pop3V2.port;
+        client.setIp(host, port);
         while (true)
         {
           menuPop3v2();
-          console.info(">>", std::getline(std::cin, messages));
+          std::getline(std::cin, messages);
           if (messages == "quit") break;
           client.sendPopv2(messages);
         }

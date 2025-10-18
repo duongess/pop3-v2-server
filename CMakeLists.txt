@@ -23,6 +23,7 @@ add_executable(server
 add_executable(client
   client/main.cpp
   client/client.cpp
+  client/utils.cpp
   common/protocol.cpp
   common/utils.cpp
 )

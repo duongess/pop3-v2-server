@@ -1,9 +1,4 @@
-// TCP
-struct Send
-{
-    /* data */
-};
-
+#include "../common/utils.h"
 
 enum class Status : int {
     Continue = 100,
