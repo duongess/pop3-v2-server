@@ -15,6 +15,7 @@ int main(int argc, char* argv[]) {
   Server server(host);
 
   ServiceManager sm;
+  sm.setServer(server);
   menuServer();
 
   while (true) {

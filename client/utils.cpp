@@ -14,33 +14,6 @@ void menuPop3v2() {
     console.log("q) Quit\n> ");
 }
 
-std::vector<std::string> splitWs(std::string_view s) {
-  std::vector<std::string> out;
-  std::string cur;
-  for (char c : s) {
-    if (std::isspace(static_cast<unsigned char>(c))) {
-      if (!cur.empty()) { out.push_back(cur); cur.clear(); }
-    } else cur.push_back(c);
-  }
-  if (!cur.empty()) out.push_back(cur);
-  return out;
-}
-
-std::string tolowerCopy(std::string s) {
-  std::transform(s.begin(), s.end(), s.begin(),
-                 [](unsigned char c){ return (char)std::tolower(c); });
-  return s;
-}
-
-// (Tuỳ chọn) kiểm tra rất sơ bộ host/ip
-bool lookLikeHost(const std::string& s) {
-  if (s.empty()) return false;
-  // Cho phép chữ, số, '.', '-', ':' (IPv6/port nếu bạn hỗ trợ sau)
-  return std::all_of(s.begin(), s.end(), [](unsigned char c){
-    return std::isalnum(c) || c=='.' || c=='-' || c==':';
-  });
-}
-
 // --- parser chính ---
 ParsedCommand parseCliLine(std::string_view line) {
   ParsedCommand pc;

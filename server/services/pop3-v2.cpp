@@ -1,9 +1,10 @@
-#include "tcp.h"
+#include "pop3-v2.h"
 
 static std::atomic<bool> g_tcp_stop{false};
 static Protocol g_server;
+std::string user, pass;
 
-int runPop3V2(const std::string& host, const std::string& port, int kBufferSize) {
+int runPop3V2(Server& server, const std::string& host, const std::string& port, int kBufferSize) {
   console.log("[Pop3 V2] Starting Pop3 V2 server on ", host, ":", port, "...\n");
 
   g_tcp_stop = false;
@@ -29,7 +30,17 @@ int runPop3V2(const std::string& host, const std::string& port, int kBufferSize)
 
     if (received.status == Status::OK) {
         console.running("[Pop3 V2] Received: ", received.data );
-        client.sendData("[Pop3 V2] Server OK");
+        auto t = splitWs(received.data);
+        std::string function = tolowerCopy(t[0]);
+        console.warn(function);
+        if (function == "user") {
+          user = tolowerCopy(t[1]);
+        }
+        if (function == "pass") {
+          pass = tolowerCopy(t[1]);
+          console.warn(user, pass);
+          client.sendData(server.login(user, pass, client.getSocket()));
+        }        
     } else {
         console.error("[Pop3 V2] Error: ", received.error );
     }

@@ -42,8 +42,8 @@ void ServiceManager::startPop3V2(const std::string& host, const std::string& por
 
     running = true;
     current = Services::POP3V2;
-    worker = std::thread([&, host, port, bufferSize]() {
-        runPop3V2(host, port, bufferSize);
+    worker = std::thread([&, this, host, port, bufferSize]() {
+        runPop3V2(*this->server, host, port, bufferSize);
         running = false;
         current = Services::NOT;
     });

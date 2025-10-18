@@ -65,7 +65,10 @@ void Client::sendPopv2(const std::string& message) {
       const LoginArgs& a = std::get<LoginArgs>(pc.payload);
       this->host = a.host;
       this->request(p.USER(a.user));
-      this->request(p.PASS(a.pass));
+      std::string token = this->request(p.PASS(a.pass));
+      if (token != "") {
+        this->token = token;
+      };
       // connect + gửi USER/PASS theo POP3 (dùng code sẵn có của bạn)
       // connectTo(a.host); send_line(USER a.user); recv_status(); send_line(PASS a.pass); ...
       break;

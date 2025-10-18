@@ -10,6 +10,7 @@ protected:
 public:
     Protocol() = default;
     virtual ~Protocol();
+    socket_handle_t getSocket(){return this->sock;}
 
     bool connectTo(const std::string& host, const std::string& port);
     bool bindAndListen(const std::string& host, const std::string& port);

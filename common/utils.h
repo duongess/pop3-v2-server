@@ -30,4 +30,7 @@ bool net_init();
 void net_cleanup();
 void close_socket(socket_handle_t s);
 addrinfo* resolveAddress(const std::string& host, const std::string& port, bool passive);
+std::vector<std::string> splitWs(std::string_view s);
+std::string tolowerCopy(std::string s);
+bool lookLikeHost(const std::string& s);
 

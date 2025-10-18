@@ -18,7 +18,7 @@ public:
   Server(std::string host): host_(host) {};
 
   bool start(std::string port);
-  bool hasUser(const std::string& username) const;
+  bool hasUser(const std::string& username);
   bool hasAnyUser() const;
   void checkAccout() const;
 
@@ -26,7 +26,8 @@ public:
   // auth
   AuthResult signUp(const std::string& username, const std::string& password);
   AuthResult signIn(const std::string& username, const std::string& password);
-  void verify(const std::string& username, const std::string& password, const std::string& host, const socket_handle_t& socket_fd);
+  std::string login(const std::string& username, const std::string& password, const socket_handle_t& socket_fd);
+  // void verify(const socket_handle_t& socket_fd);
 
   // broadcast tiện dùng
   void broadcastFrom(Session* who, const std::string& text);
