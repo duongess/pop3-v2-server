@@ -12,20 +12,20 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/client)
 add_executable(server
   server/main.cpp
   server/services/tcp.cpp
+  server/services/pop3-v2.cpp
   server/session-manager.cpp
   server/service-manager.cpp
   server/server.cpp
   server/utils.cpp
-  common/protocol/tcp-base.cpp
-  common/protocol/tcp.cpp
+  common/protocol.cpp
   common/utils.cpp
 )
 
 add_executable(client
   client/main.cpp
-  client/services/tcp.cpp
-  common/protocol/tcp-base.cpp
-  common/protocol/tcp.cpp
+  client/client.cpp
+  client/utils.cpp
+  common/protocol.cpp
   common/utils.cpp
 )
 

@@ -1,6 +1,6 @@
-#include "tcp-base.h"
+#include "protocol.h"
 
-std::atomic<bool> TCPBase::stop_flag{false};
+std::atomic<bool> Protocol::stop_flag{false};
 
 // helper
 static bool set_reuseaddr(socket_handle_t s) {
@@ -8,11 +8,11 @@ static bool set_reuseaddr(socket_handle_t s) {
     return setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (const char*)&opt, sizeof(opt)) == 0;
 }
 
-TCPBase::~TCPBase() {
+Protocol::~Protocol() {
     close();
 }
 
-bool TCPBase::connectTo(const std::string& host, const std::string& port) {
+bool Protocol::connectTo(const std::string& host, const std::string& port) {
     if (!net_init()) {
         std::cerr << "[TCP] Failed to init networking (WSAStartup)\n";
         return 1;
@@ -50,7 +50,11 @@ bool TCPBase::connectTo(const std::string& host, const std::string& port) {
     return true;
 }
 
-bool TCPBase::bindAndListen(const std::string& host, const std::string& port) {
+bool Protocol::isConnected() {
+    return sock != invalid_socket_handle && stop_flag == false;
+}
+
+bool Protocol::bindAndListen(const std::string& host, const std::string& port) {
     if (!net_init()) {
         console.error("[TCP] Failed to init networking (WSAStartup)");
         return 1;
@@ -88,7 +92,7 @@ bool TCPBase::bindAndListen(const std::string& host, const std::string& port) {
     return true;
 }
 
-bool TCPBase::acceptClient(TCPBase& client) {
+bool Protocol::acceptClient(Protocol& client) {
     if (client.sock != invalid_socket_handle) return true;
     console.debug("accept() on sock=", this->sock);
     socket_handle_t client_sock = accept(this->sock, nullptr, nullptr);
@@ -104,11 +108,11 @@ bool TCPBase::acceptClient(TCPBase& client) {
 
 
 
-void TCPBase::close() {
+void Protocol::close() {
     close_socket(this->sock);
 }
 
-void TCPBase::clean() {
+void Protocol::clean() {
     if (this->sock != invalid_socket_handle) {
         shutdown(this->sock, SD_BOTH);
         this->close();
@@ -118,10 +122,42 @@ void TCPBase::clean() {
     net_cleanup();
 }
 
-void TCPBase::requestStop() {
+void Protocol::requestStop() {
     stop_flag = true;
 }
 
-bool TCPBase::shouldStop() {
+bool Protocol::shouldStop() {
     return stop_flag.load();
+}
+
+bool Protocol::sendData(const std::string& data) {
+    ssize_t sent = send(sock, data.c_str(), data.size(), 0);
+    if (sent < 0) {
+        std::cerr << "[TCP] Send failed\n";
+        return false;
+    }
+
+    return true;
+}
+
+
+Response Protocol::receiveData(const size_t& size) {
+    std::vector<char> buffer(size);
+    console.debug(123);
+    int bytesReceived = recv(sock, buffer.data(), (int)buffer.size(), 0);
+    console.debug(456);
+    if (bytesReceived < 0) {
+        int err = WSAGetLastError();
+        std::cerr << "[TCP] Receive error, code=" << err << "\n";
+        return { Status::ServerError, {} };
+    }
+
+    if (bytesReceived == 0) {
+        std::cerr << "[TCP] Connection closed by peer\n";
+        return { Status::BadRequest, {} };
+    }
+
+    buffer[bytesReceived] = '\0';
+    std::string data(buffer.data(), bytesReceived);
+    return { Status::OK, data };
 }

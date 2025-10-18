@@ -1,14 +1,13 @@
 #pragma once
-#include "tcp.h"
+#include "protocol.h"
 #include "host.h"
 #include "port.h"
 #include "buffer.h"
-// thêm udp.h, http.h ... sau
 
 namespace Config {
     struct AppConfig {
         TCPConfig tcp;
-
+        Pop3v2Config pop3V2;
         // chừa chỗ để thêm service khác
         // UDPConfig udp;
         // HTTPConfig http;

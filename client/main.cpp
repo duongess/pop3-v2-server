@@ -1,9 +1,7 @@
 // Interactive client with menu/cases
-#include <iostream>
-#include <string>
-#include <sstream>
-#include "services/tcp.h"
+#include "client.h"
 #include "../config/config.h"
+#include "utils.h"
 
 int main(int argc, char* argv[]) {
   Config::AppConfig cfg = Config::defaultConfig();
@@ -13,22 +11,33 @@ int main(int argc, char* argv[]) {
     host = argv[1];
   }
 
+  Client client;
+  
+  menuClient();
   while (true) {
-    std::cout << "\n=== Client Menu ===\n";
-    std::cout << "1) TCP send\n";
-    std::cout << "q) Quit\n> ";
-
     std::string choice;
     if (!std::getline(std::cin, choice)) break;
+    std::string messages;
 
     switch (choice.empty() ? '\0' : choice[0]) {
       case '1': {
-        std::string messages;
         port = cfg.tcp.port;
         std::cout << "Send to server " << host << ":" << port << std::endl;
         std::cout << "messages: "; std::getline(std::cin, messages);
-        int rc = sendMessage(host, port, messages);
-        if (rc != 0) std::cerr << "TCP echo failed" << std::endl;
+        // client.setIp();
+        break;
+      }
+      case '2': {
+        port = cfg.pop3V2.port;
+        client.setIp(host, port);
+        while (true)
+        {
+          menuPop3v2();
+          std::getline(std::cin, messages);
+          if (messages == "quit") break;
+          client.sendPopv2(messages);
+        }
+        
         break;
       }
       case 'q':

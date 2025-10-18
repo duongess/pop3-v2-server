@@ -9,15 +9,15 @@ std::string SessionManager::generateToken_(size_t len) {
     return s;
 }
 
-void SessionManager::createSessionFor(const std::string& username, const std::string& host, const socket_handle_t& socket_fd) {
+std::string SessionManager::createSessionFor(const std::string& username, const socket_handle_t& socket_fd) {
     Session s;
     s.username = username;
-    s.host = host;
     s.socket_fd = socket_fd;
     s.token = generateToken_();
     s.isAuthenticated = true;
 
     this->sessionsByToken_[s.token] = s;
+    return s.token;
 }
 
 Session SessionManager::getSessionByToken(const std::string& token) {

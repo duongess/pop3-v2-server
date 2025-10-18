@@ -1,1 +1,1 @@
-enum class Services { NOT, TCP };
+enum class Services { NOT, TCP, POP3V2 };

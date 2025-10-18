@@ -13,7 +13,7 @@ public:
     ~SessionManager();
 
     // Trả về token nếu tạo thành công
-    void createSessionFor(const std::string& username, const std::string& host, const socket_handle_t& socket_fd);
+    std::string createSessionFor(const std::string& username, const socket_handle_t& socket_fd);
 
     // Tìm session từ token
     Session getSessionByToken(const std::string& token);

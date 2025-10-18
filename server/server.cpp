@@ -58,15 +58,15 @@ AuthResult Server::signIn(const std::string& username, const std::string& passwo
   return AuthResult::Ok;
 }
 
-void Server::verify(const std::string& username, const std::string& password, const std::string& host, const socket_handle_t& socket_fd) {
-  if (this->hasUser(username)) {
+std::string Server::login(const std::string& username, const std::string& password, const socket_handle_t& socket_fd) {
+  if (this->signIn(username, password) == AuthResult::UserNotFound) {
     std::cout << "username invaible\n";
-    return;
+    return "";
   } else if (this->users_[username] == password) {
     std::cout << "password flase\n";
-    return;
+    return "";
   }
-  this->sessionManager_.createSessionFor(username, host, socket_fd);
+  return this->sessionManager_.createSessionFor(username, socket_fd); 
 }
 
 // ... phần start(), onAccept(), broadcastFrom(...) của bạn giữ nguyên,
@@ -78,7 +78,7 @@ bool Server::start(std::string port){
   return true;
 }
 
-bool Server::hasUser(const std::string& username) const {
+bool Server::hasUser(const std::string& username) {
   std::lock_guard<std::mutex> lk(users_mu_);
   return users_.find(username) != users_.end();
 }
