@@ -13,15 +13,9 @@ enum class Status : int {
     ServerError = 500
 };
 
-// enum class PROTOCOL {
-//     TCP
-// };
-
-template<typename T>
 struct Response {
     Status status;
-    // PROTOCOL protocol;
-    T data;
+    std::string data;
     std::string error = "";
 };
 
