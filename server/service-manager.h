@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 
-#include "services/tcp.h"
+#include "services/index.h"
 #include "../types/services.h"
 
 class ServiceManager {
@@ -16,6 +16,9 @@ class ServiceManager {
   public:
     // Khai báo các hàm public
     void startTCP(const std::string& host, const std::string& port, int bufferSize);
-    void stopTCP();
+    void endTCP();
+
+    void startPop3V2(const std::string& host, const std::string& port, int bufferSize);
+    void endPop3V2();
     void cleanup();
 };

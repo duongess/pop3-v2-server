@@ -3,7 +3,7 @@
 static std::atomic<bool> g_tcp_stop{false};
 static Protocol g_server;
 
-int start_tcp(const std::string& host, const std::string& port, int kBufferSize) {
+int runTCP(const std::string& host, const std::string& port, int kBufferSize) {
   console.log("[TCP] Starting TCP server on ", host, ":", port, "...\n");
 
   g_tcp_stop = false;
@@ -42,7 +42,7 @@ int start_tcp(const std::string& host, const std::string& port, int kBufferSize)
   return 0;
 }
 
-int stop_tcp() {
+int stopTCP() {
   console.warn("[TCP] Stopping TCP service...");
   g_tcp_stop = true;
   Protocol::requestStop();

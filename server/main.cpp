@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
 
       case 'e':
       case 'E':
-        sm.stopTCP();
+        sm.endTCP();
         menuServer();
         break;
 
