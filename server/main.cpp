@@ -3,6 +3,7 @@
 #include "server.h"
 #include "utils.h"
 #include "../common/console.h"
+#include "storage/db.h"
 
 int main(int argc, char* argv[]) {
   console.reset();
@@ -11,6 +12,13 @@ int main(int argc, char* argv[]) {
   std::string port = cfg.tcp.port;
 
   if (argc >= 2) host = argv[1];
+
+  DB db;
+  if (!db.initSchema()) { 
+    console.error("DB not connected");
+    return 0;
+  }
+  db.dumpTables();
 
   Server server(host);
 
