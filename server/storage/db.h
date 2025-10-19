@@ -13,6 +13,9 @@ public:
     bool initSchema() {
         return user.createTableIfNeeded() && mail.createTableIfNeeded();
     }
+    
+    void dumpTables();
+
 
     DbConnection conn; // nếu cần truy cập thô
     UserTable user;
