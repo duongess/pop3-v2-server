@@ -22,4 +22,6 @@ class Client {
 
         void sendText(const std::string& message);
         void sendPopv2(const std::string& message);
+
+        std::string responsePopv2(const std::string& message);
 };
