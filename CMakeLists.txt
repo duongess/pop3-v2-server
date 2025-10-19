@@ -39,6 +39,8 @@ endif()
 # ====== Storage layer ======
 add_library(storage
   server/storage/db.cpp
+  server/storage/dbConnection.cpp
+  server/storage/table.cpp
   server/storage/user.cpp
   server/storage/mail.cpp
 )

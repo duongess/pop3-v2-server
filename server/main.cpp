@@ -3,6 +3,18 @@
 #include "server.h"
 #include "utils.h"
 #include "../common/console.h"
+#include "storage/db.h"
+
+void dumpTables(sqlite3* db){
+  const char* q = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;";
+  sqlite3_stmt* st=nullptr;
+  if (sqlite3_prepare_v2(db, q, -1, &st, nullptr)==SQLITE_OK){
+    while(sqlite3_step(st)==SQLITE_ROW){
+      console.log("[TABLE] ", (const char*)sqlite3_column_text(st,0));
+    }
+  }
+  sqlite3_finalize(st);
+}
 
 int main(int argc, char* argv[]) {
   console.reset();
@@ -11,6 +23,13 @@ int main(int argc, char* argv[]) {
   std::string port = cfg.tcp.port;
 
   if (argc >= 2) host = argv[1];
+
+  DB db;
+  if (!db.initSchema()) { 
+    console.error("DB not connected");
+    return 0;
+  }
+  dumpTables(db.conn.get());
 
   Server server(host);
 
