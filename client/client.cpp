@@ -25,7 +25,7 @@ std::string Client::request(const std::string& message) {
     console.info("[TCP] Sent: ", message);
 
     Response response = client.receiveData();
-    if (response.status == Status::OK || response.status == Status::Continue) {
+    if (response.status == Status::OK) {
         console.info("[TCP] Received: ", response.data);
         return response.data;
     }
@@ -36,6 +36,35 @@ std::string Client::request(const std::string& message) {
 void Client::sendText(const std::string& message) {
     this->request(message);
 };
+
+// helpers
+static std::string trimCRLF(std::string s) {
+  while (!s.empty() && (s.back()=='\n' || s.back()=='\r')) s.pop_back();
+  return s;
+}
+static bool startsWith(std::string& s, const std::string& pfx) {
+  bool sw = s.rfind(pfx, 0) == 0;
+  if (!sw) return false;
+  s = s.substr(pfx.size() + 1); // thêm kí tự " "
+  return true;
+}
+
+std::string Client::responsePopv2(const std::string& message) {
+  std::string mess = this->request(message);
+  mess = trimCRLF(mess);
+
+  if (startsWith(mess, "+OK")) {
+    console.success("[POPv2] ", mess);
+    return mess;
+  }
+  if (startsWith(mess, "-ERR")) {
+    console.error("[POPv2] ", mess);            
+    return "";
+  }
+  console.warn("[POPv2] Unknown response: ", mess);
+  return "";
+}
+
 void Client::sendPopv2(const std::string& message) {
     RequestPopV2 p;
     ParsedCommand pc = parseCliLine(message);
@@ -47,13 +76,11 @@ void Client::sendPopv2(const std::string& message) {
     case CliCmd::LOGIN: {
       const LoginArgs& a = std::get<LoginArgs>(pc.payload);
       this->host = a.host;
-      this->request(p.USER(a.user));
-      std::string token = this->request(p.PASS(a.pass));
+      this->responsePopv2(p.USER(a.user));
+      std::string token = this->responsePopv2(p.PASS(a.pass));
       if (token != "") {
         this->token = token;
       };
-      // connect + gửi USER/PASS theo POP3 (dùng code sẵn có của bạn)
-      // connectTo(a.host); send_line(USER a.user); recv_status(); send_line(PASS a.pass); ...
       break;
     }
     case CliCmd::SYNC: {
