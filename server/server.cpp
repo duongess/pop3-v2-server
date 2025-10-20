@@ -17,7 +17,9 @@ std::string Server::hashPassword(const std::string& pw) const {
 
 Server::Server(std::string host) {
   this->host_ = host;
-  initDB();
+  if (initDB()) {
+    this->users_ = db.user.getAllUser();
+  }
 }
 
 bool Server::initDB() {

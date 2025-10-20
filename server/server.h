@@ -47,6 +47,7 @@ private:
   // Users (đơn giản cho đồ án): username -> passwordHash
   mutable std::mutex users_mu_;
   std::unordered_map<std::string, std::string> users_;
+  void loadUserDB();
 
   // Tiện ích
   std::string hashPassword(const std::string& pw) const;
