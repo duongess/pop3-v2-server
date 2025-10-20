@@ -15,37 +15,25 @@ std::string Server::hashPassword(const std::string& pw) const {
   return std::to_string(h);
 }
 
-void Server::loadUsersFromFile(const std::string& path){
-  std::lock_guard<std::mutex> lk(users_mu_);
-  users_.clear();
-  std::ifstream f(path);
-  if (!f) return; // lần đầu chưa có file -> để trống (coi như “no users yet”)
-  std::string line;
-  while (std::getline(f, line)) {
-    line = trim(line);
-    if (line.empty() || line[0]=='#') continue;
-    // format: username:hash
-    auto p = line.find(':');
-    if (p==std::string::npos) continue;
-    std::string u = line.substr(0,p);
-    std::string h = line.substr(p+1);
-    users_[u] = h;
-  }
+Server::Server(std::string host) {
+  this->host_ = host;
+  initDB();
 }
 
-void Server::saveUsersToFile(const std::string& path) const {
-  std::lock_guard<std::mutex> lk(users_mu_);
-  std::ofstream f(path, std::ios::trunc);
-  for (auto& kv : users_) {
-    f << kv.first << ":" << kv.second << "\n";
+bool Server::initDB() {
+  if (!db.initSchema()) { 
+    console.error("DB not connected");
+    return false;
   }
+  db.dumpTables();
+  return true;
 }
 
 AuthResult Server::signUp(const std::string& username, const std::string& password){
   std::lock_guard<std::mutex> lk(users_mu_);
   if (users_.count(username)) return AuthResult::AlreadyExists;
   users_[username] = hashPassword(password);
-  // saveUsersToFile(); // lưu lại để lần sau còn dùng
+  db.user.createUser(username, users_[username]);
   return AuthResult::Ok;
 }
 
@@ -67,15 +55,6 @@ std::string Server::login(const std::string& username, const std::string& passwo
     return "";
   }
   return this->sessionManager_.createSessionFor(username, socket_fd); 
-}
-
-// ... phần start(), onAccept(), broadcastFrom(...) của bạn giữ nguyên,
-// chỉ cần gọi loadUsersFromFile() một lần khi khởi động.
-bool Server::start(std::string port){
-  // khởi tạo socket … (như bạn đã làm)
-  loadUsersFromFile(); // <- thêm dòng này
-  // vòng select/accept … (giữ nguyên)
-  return true;
 }
 
 bool Server::hasUser(const std::string& username) {
