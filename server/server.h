@@ -12,10 +12,12 @@
 #include "../common/utils.h"
 #include "session-manager.h"
 #include "../types/auth.h"
+#include "storage/db.h"
+#include "storage/user.h"
 
 class Server {
 public:
-  Server(std::string host): host_(host) {};
+  Server(std::string host);
 
   bool start(std::string port);
   bool hasUser(const std::string& username);
@@ -31,25 +33,24 @@ public:
 
   // broadcast tiện dùng
   void broadcastFrom(Session* who, const std::string& text);
+  bool initDB();
 
 private:
-  socket_handle_t listen_fd_ = INVALID_SOCKET;
+  socket_handle_t listen_fd_ = invalid_socket_handle;
   std::string host_;
   std::string currentName_;
 
   // Kết nối
   SessionManager sessionManager_;
+  DB db;
 
   // Users (đơn giản cho đồ án): username -> passwordHash
   mutable std::mutex users_mu_;
   std::unordered_map<std::string, std::string> users_;
+  void loadUserDB();
 
   // Tiện ích
   std::string hashPassword(const std::string& pw) const;
-
-  // Lưu/đọc file (tuỳ chọn, có thể bỏ nếu chỉ demo in-memory)
-  void loadUsersFromFile(const std::string& path = "users.db");
-  void saveUsersToFile(const std::string& path = "users.db") const;
 
   void onAccept(socket_handle_t fd);
 };

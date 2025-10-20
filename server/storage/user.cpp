@@ -26,3 +26,31 @@ bool UserTable::createUser(const std::string& username, const std::string& passw
     sqlite3_finalize(st);
     return rc == SQLITE_DONE;
 }
+
+std::unordered_map<std::string, std::string> UserTable::getAllUser() {
+    const char* sql = "SELECT username, passwordHash FROM users ORDER BY userId;";
+
+    std::unordered_map<std::string, std::string> out;
+    sqlite3_stmt* st = nullptr;
+    int prep = sqlite3_prepare_v2(conn_.get(), sql, -1, &st, nullptr);
+    if (prep != SQLITE_OK) {
+        console.error("[DB] prepare failed: ", sqlite3_errmsg(conn_.get()));
+        return out;
+    }
+
+    while (true) {
+        int rc = sqlite3_step(st);
+        if (rc == SQLITE_ROW) {
+            const unsigned char* u = sqlite3_column_text(st, 0);
+            const unsigned char* p = sqlite3_column_text(st, 1);
+            out[reinterpret_cast<const char*>(u)] = reinterpret_cast<const char*>(p);
+        } else if (rc == SQLITE_DONE) {
+            break;
+        } else {
+            console.error("[DB] step failed: ", sqlite3_errmsg(conn_.get()));
+            break;
+        }
+    }
+    sqlite3_finalize(st);
+    return out;
+}
