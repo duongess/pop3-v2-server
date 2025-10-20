@@ -20,6 +20,7 @@
 #include <memory>
 #include <unordered_map>
 #include <mutex>
+#include <thread>
 #include "console.h"
 
 using socket_handle_t = SOCKET;
