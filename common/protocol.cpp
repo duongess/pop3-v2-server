@@ -12,6 +12,20 @@ Protocol::~Protocol() {
     close();
 }
 
+bool Protocol::isValid() const { return sock != invalid_socket_handle; }
+
+Protocol::Protocol(Protocol&& other) noexcept
+  : sock(std::exchange(other.sock, invalid_socket_handle)) {}
+
+Protocol& Protocol::operator=(Protocol&& other) noexcept {
+  if (this != &other) {
+    close(); // đóng handle cũ (nếu có)
+    sock = std::exchange(other.sock, invalid_socket_handle);
+  }
+  return *this;
+}
+
+
 bool Protocol::connectTo(const std::string& host, const std::string& port) {
     if (!net_init()) {
         std::cerr << "[TCP] Failed to init networking (WSAStartup)\n";
@@ -131,6 +145,7 @@ bool Protocol::shouldStop() {
 }
 
 bool Protocol::sendData(const std::string& data) {
+    console.debug("sock: ", sock);
     ssize_t sent = send(sock, data.c_str(), data.size(), 0);
     if (sent < 0) {
         std::cerr << "[TCP] Send failed\n";

@@ -11,6 +11,15 @@ protected:
 public:
     AuthSession sess;
     Protocol() = default;
+    // Cấm copy
+    Protocol(const Protocol&) = delete;
+    Protocol& operator=(const Protocol&) = delete;
+
+    // Cho phép move (KHAI BÁO ở header)
+    Protocol(Protocol&& other) noexcept;
+    Protocol& operator=(Protocol&& other) noexcept;
+
+    bool isValid() const;
     virtual ~Protocol();
     socket_handle_t getSocket(){return this->sock;}
 

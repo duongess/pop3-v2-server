@@ -2,7 +2,22 @@
 
 static std::atomic<bool> g_tcp_stop{false};
 static Protocol g_server;
-std::string user, pass;
+static std::vector<std::thread> clients;
+
+static void serveOneClientThread(Server& server, Protocol client, int kBufferSize) {
+  if (!client.isValid()) { 
+    console.error("[Pop3 V2] Invalid client socket");
+    return;
+  }
+  serveOneClient(server, client, kBufferSize);
+}
+
+static void cancelClients() {
+  for (auto& cli:clients) {
+    if (cli.joinable()) cli.join();
+  }
+  clients.clear();
+}
 
 int runPop3V2(Server& server, const std::string& host, const std::string& port, int kBufferSize) {
   console.log("[Pop3 V2] Starting Pop3 V2 server on ", host, ":", port, "...\n");
@@ -20,10 +35,20 @@ int runPop3V2(Server& server, const std::string& host, const std::string& port, 
       continue;
     }
     console.success("[Pop3 V2] Client connected");
-    serveOneClient(server, client, kBufferSize);
+    try {
+      clients.emplace_back(
+        serveOneClientThread,
+        std::ref(server),
+        std::move(client),
+        kBufferSize
+      );
+    } catch (const std::exception& ex) {
+      console.error("[Pop3 V2] Failed to spawn client thread: ", ex.what());
+    }
   }
 
   g_server.clean();
+  cancelClients();
   console.stopping("[Pop3 V2] Server stopped listening");
   return 0;
 }
@@ -31,8 +56,8 @@ int runPop3V2(Server& server, const std::string& host, const std::string& port, 
 int stopPop3V2() {
   console.warn("[Pop3 V2] Stopping Pop3 V2 service...");
   g_tcp_stop = true;
+  g_server.close();
   Protocol::requestStop();
-  g_server.clean();
   console.stopping("[Pop3 V2] Pop3 V2 service fully stopped\n");
   return 0;
 }
@@ -83,11 +108,13 @@ void serveOneClient(Server& server, Protocol& client, int kBufferSize) {
   while(true) {
     Response received = client.receiveData(kBufferSize);
     if (received.status != Status::OK) {
-      console.error("[Pop3 V2] Error: ", received.error);
-      break;
+      console.error("[Pop3 V2] Error: " + received.error);
     }
     std::string reply = handleCommandLine(server, client, received.data);
-    client.sendData(reply);
+    if (!client.sendData(reply)) {
+      console.error("[POPv2] Send failed → closing client");
+      break; // THOÁT vòng
+    }
 
     if (client.sess.state == AuthState::UPDATE) { // sau QUIT
       break;
