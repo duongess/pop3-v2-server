@@ -56,6 +56,7 @@ int runPop3V2(Server& server, const std::string& host, const std::string& port, 
 int stopPop3V2() {
   console.warn("[Pop3 V2] Stopping Pop3 V2 service...");
   g_tcp_stop = true;
+  g_server.close();
   Protocol::requestStop();
   console.stopping("[Pop3 V2] Pop3 V2 service fully stopped\n");
   return 0;
@@ -107,16 +108,18 @@ void serveOneClient(Server& server, Protocol& client, int kBufferSize) {
   while(true) {
     Response received = client.receiveData(kBufferSize);
     if (received.status != Status::OK) {
-      throw std::runtime_error("[Pop3 V2] Error: " + received.error);
+      console.error("[Pop3 V2] Error: " + received.error);
     }
     std::string reply = handleCommandLine(server, client, received.data);
-    client.sendData(reply);
+    if (!client.sendData(reply)) {
+      console.error("[POPv2] Send failed → closing client");
+      break; // THOÁT vòng
+    }
 
     if (client.sess.state == AuthState::UPDATE) { // sau QUIT
       break;
     }
   }
-  console.debug("kdfjhwuidhwduiwdiuwhduwdhwuid");
   client.close();
 }
 
