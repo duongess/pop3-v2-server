@@ -32,6 +32,9 @@ int main(int argc, char* argv[]) {
         client.setIp(host, port);
         while (true)
         {
+          if (client.isConnected()) {
+            accountInformation(client.getUsername(), client.getHost(), client.getPort());
+          }
           menuPop3v2();
           std::getline(std::cin, messages);
           if (messages == "quit") break;
