@@ -48,15 +48,12 @@ AuthResult Server::signIn(const std::string& username, const std::string& passwo
   return AuthResult::Ok;
 }
 
-std::string Server::login(const std::string& username, const std::string& password, const socket_handle_t& socket_fd) {
-  if (this->signIn(username, password) == AuthResult::UserNotFound) {
-    std::cout << "username invaible\n";
-    return "";
-  } else if (this->users_[username] == password) {
-    std::cout << "password flase\n";
-    return "";
-  }
-  return this->sessionManager_.createSessionFor(username, socket_fd); 
+AuthResult Server::login(const std::string& username, const std::string& password, const socket_handle_t& socket_fd) {
+  AuthResult res = this->signIn(username, password);
+  int userId = this->db.user.findUserId(username, this->users_[username]);
+  console.info("User ", username, " (ID=", userId, ") logged in with socket ", socket_fd);
+  this->sessionManager_.createSessionFor(userId, socket_fd);
+  return res; 
 }
 
 bool Server::hasUser(const std::string& username) {

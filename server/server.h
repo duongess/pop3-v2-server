@@ -28,7 +28,7 @@ public:
   // auth
   AuthResult signUp(const std::string& username, const std::string& password);
   AuthResult signIn(const std::string& username, const std::string& password);
-  std::string login(const std::string& username, const std::string& password, const socket_handle_t& socket_fd);
+  AuthResult login(const std::string& username, const std::string& password, const socket_handle_t& socket_fd);
   // void verify(const socket_handle_t& socket_fd);
 
   // broadcast tiện dùng

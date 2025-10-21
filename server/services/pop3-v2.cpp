@@ -86,7 +86,7 @@ std::string handleUSER(AuthSession& sess, std::string_view username) {
 std::string handlePASS(AuthSession& sess, Server& server, std::string_view password, socket_handle_t sock) {
   if (sess.state != AuthState::AUTHORIZATION) return pop_err("already authorized");
   if (sess.pendingUser.empty()) return pop_err("send USER first");
-  auto result = server.signIn(sess.pendingUser, std::string(password)); // dùng hàm của bạn
+  auto result = server.login(sess.pendingUser, std::string(password), sock); // dùng hàm của bạn
   switch (result) {
     case AuthResult::Ok:
       sess.authed = true;

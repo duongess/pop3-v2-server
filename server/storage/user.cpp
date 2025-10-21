@@ -54,3 +54,24 @@ std::unordered_map<std::string, std::string> UserTable::getAllUser() {
     sqlite3_finalize(st);
     return out;
 }
+
+int UserTable::findUserId(const std::string& username, const std::string& passwordHash) {
+    const char* sql = "SELECT userId FROM users WHERE username = ? AND passwordHash = ? LIMIT 1;";
+
+    sqlite3_stmt* st = nullptr;
+    int prep = sqlite3_prepare_v2(conn_.get(), sql, -1, &st, nullptr);
+    if (prep != SQLITE_OK) {
+        console.error("[DB] prepare failed: ", sqlite3_errmsg(conn_.get()));
+        return -1;
+    }
+
+    sqlite3_bind_text(st, 1, username.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(st, 2, passwordHash.c_str(), -1, SQLITE_TRANSIENT);
+    if (sqlite3_step(st) == SQLITE_ROW) {
+        return sqlite3_column_int(st, 0);
+    } else {
+        return -1; // not found
+    }
+    sqlite3_finalize(st);
+    return -1;
+}
