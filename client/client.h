@@ -7,6 +7,7 @@ using pop::RequestPopV2;
 
 class Client {
     private:
+        std::string username;
         std::string host;
         std::string port;
         std::string token;
@@ -19,6 +20,11 @@ class Client {
             this->host = host;
             this->port = port;
         }
+
+        bool isConnected();
+        std::string getUsername() const { return this->username; }
+        std::string getHost() const { return this->host; }
+        std::string getPort() const { return this->port; }
 
         void sendText(const std::string& message);
         void sendPopv2(const std::string& message);

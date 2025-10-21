@@ -12,6 +12,10 @@ bool Client::connect() {
 
 void Client::close() { client.close(); }
 
+bool Client::isConnected() {
+    return client.isConnected();
+}
+
 std::string Client::request(const std::string& message) {
     // KHÔNG connectTo ở đây nữa
     if (!client.isConnected()) {
@@ -78,6 +82,7 @@ void Client::sendPopv2(const std::string& message) {
       this->host = a.host;
       this->responsePopv2(p.USER(a.user));
       std::string token = this->responsePopv2(p.PASS(a.pass));
+      this->username = a.user;
       if (token != "") {
         this->token = token;
       };
