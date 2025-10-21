@@ -9,7 +9,7 @@ std::string SessionManager::generateToken_(size_t len) {
     return s;
 }
 
-std::string SessionManager::createSessionFor(const std::string& userId, const socket_handle_t& socket_fd) {
+std::string SessionManager::createSessionFor(const int& userId, const socket_handle_t& socket_fd) {
     Session s;
     s.userId = userId;
     s.token = generateToken_();

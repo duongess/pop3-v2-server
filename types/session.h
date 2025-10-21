@@ -3,7 +3,7 @@
 #include "../common/utils.h"
 
 struct Session {
-    std::string userId;
+    int userId;
     std::string token;
     std::string host;
     bool isAuthenticated = false;
