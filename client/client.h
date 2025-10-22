@@ -20,6 +20,7 @@ class Client {
         bool connect();
         void close();
     public:
+        Client();
         void setIp(const std::string& host, const std::string& port) {
             this->host = host;
             this->port = port;

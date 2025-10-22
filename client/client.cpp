@@ -1,5 +1,9 @@
 #include "client.h"
 
+Client::Client() : db() {
+    db.initSchema();
+}
+
 bool Client::connect() {
     if (client.isConnected()) return true;
     if (!client.connectTo(host, port)) {
