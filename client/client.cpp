@@ -85,6 +85,7 @@ void Client::sendPopv2(const std::string& message) {
       this->username = a.user;
       if (token != "") {
         this->token = token;
+        db.account.createAccount(a.user, a.host, this->port);
       };
       break;
     }

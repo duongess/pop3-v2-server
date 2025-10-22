@@ -3,6 +3,9 @@
 #include "../common/protocol.h"
 #include "../types/request.h"
 #include "../types/clientInput.h"
+#include "types/state.h"
+#include "state/db.h"
+
 using pop::RequestPopV2;
 
 class Client {
@@ -12,6 +15,7 @@ class Client {
         std::string port;
         std::string token;
         Protocol client;
+        DB database;
         std::string request(const std::string& message);
         bool connect();
         void close();
