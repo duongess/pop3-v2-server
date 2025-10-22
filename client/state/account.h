@@ -8,4 +8,5 @@ public:
     bool createTableIfNeeded() override;
 
     bool createAccount(const std::string& username, const std::string& host, const std::string& port);
+    AccountState getLastAccount();
 };

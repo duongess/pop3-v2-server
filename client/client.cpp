@@ -2,6 +2,15 @@
 
 Client::Client() : db() {
     db.initSchema();
+    AccountState lastAcc = db.account.getLastAccount();
+    if (lastAcc.username != "") {
+        this->username = lastAcc.username;
+        this->host = lastAcc.host;
+        this->port = lastAcc.port;
+        console.info("[DB] Loaded last account: ", this->username, "@", this->host, ":", this->port);
+    } else {
+        console.info("[DB] No previous account found.");
+    }
 }
 
 bool Client::connect() {
