@@ -1,6 +1,5 @@
 #pragma once
 #include "account.h"
-#include "mail.h"
 #include "string"
 #include "dbConnection.h"
 

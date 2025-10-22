@@ -50,6 +50,18 @@ target_include_directories(storage PUBLIC
 )
 target_link_libraries(storage PUBLIC sqlite3_vendor)
 
+add_library(state
+  client/state/db.cpp
+  client/state/dbConnection.cpp
+  client/state/table.cpp
+  client/state/account.cpp
+)
+target_include_directories(state PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/client/state
+  ${CMAKE_CURRENT_SOURCE_DIR}/sqlite
+)
+target_link_libraries(state PUBLIC sqlite3_vendor)
+
 # ====== Server ======
 add_executable(server
   server/main.cpp
@@ -73,6 +85,8 @@ add_executable(client
   common/protocol.cpp
   common/utils.cpp
 )
+target_include_directories(client PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/client/state)
+target_link_libraries(client PRIVATE state)
 
 if (WIN32)
   target_link_libraries(server PRIVATE Ws2_32)
