@@ -19,6 +19,7 @@ Server::Server(std::string host) {
   this->host_ = host;
   if (initDB()) {
     this->users_ = db.user.getAllUser();
+    db.mail.addDemoMailsForUser(1);
   }
 }
 
@@ -68,4 +69,12 @@ bool Server::hasAnyUser() const {
 
 void Server::checkAccout() const {
   std::cout << "Join to server " << this->currentName_ << std::endl;
+}
+
+Session Server:: getSessionBySocket(socket_handle_t sock){
+  return sessionManager_.getSessionBySocket(sock );
+}
+
+std::vector<MailInfo>  Server::getMails(int userId){
+  return db.mail.listMailsForUser(userId);
 }

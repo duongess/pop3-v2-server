@@ -84,3 +84,94 @@ bool MailTable::deleteFlaggedMails(int userId)
     sqlite3_finalize(stmt);
     return ok;
 }
+
+std::vector<MailInfo> MailTable::listMailsForUser(int userId)
+{
+    std::vector<MailInfo> list;
+    const char *sql =
+        "SELECT mailId, uidl, LENGTH(body) "
+        "FROM emails WHERE userId = ? AND (flags IS NULL OR flags != 'read')";
+
+    sqlite3_stmt *stmt = nullptr;
+    if (sqlite3_prepare_v2(conn_.get(), sql, -1, &stmt, nullptr) != SQLITE_OK)
+    {
+        std::cerr << "[MailTable] listMailsForUser prepare failed: "
+                  << sqlite3_errmsg(conn_.get()) << "\n";
+        return list;
+    }
+
+    sqlite3_bind_int(stmt, 1, userId);
+
+    while (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        MailInfo info;
+        info.mailId = sqlite3_column_int(stmt, 0);
+        info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+        info.size = sqlite3_column_int(stmt, 2);
+        list.push_back(info);
+    }
+
+    sqlite3_finalize(stmt);
+    return list;
+}
+
+std::optional<MailInfo> MailTable::getMailInfo(int userId, int mailId)
+{
+    const char *sql =
+        "SELECT mailId, uidl, LENGTH(body) "
+        "FROM emails WHERE userId = ? AND mailId = ? "
+        "AND (flags IS NULL OR flags != 'read')";
+
+    sqlite3_stmt *stmt = nullptr;
+    if (sqlite3_prepare_v2(conn_.get(), sql, -1, &stmt, nullptr) != SQLITE_OK)
+    {
+        std::cerr << "[MailTable] getMailInfo prepare failed: "
+                  << sqlite3_errmsg(conn_.get()) << "\n";
+        return std::nullopt;
+    }
+
+    sqlite3_bind_int(stmt, 1, userId);
+    sqlite3_bind_int(stmt, 2, mailId);
+
+    MailInfo info;
+    if (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        info.mailId = sqlite3_column_int(stmt, 0);
+        info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+        info.size = sqlite3_column_int(stmt, 2);
+        sqlite3_finalize(stmt);
+        return info;
+    }
+
+    sqlite3_finalize(stmt);
+    return std::nullopt;
+}
+
+bool MailTable::addDemoMailsForUser(int userId)
+{
+    // Demo subjects & bodies
+    std::vector<std::pair<std::string, std::string>> demoMails = {
+        {"Welcome to POP3 Demo", "This is a test message for your inbox."},
+        {"System Notice", "Remember to check your new messages daily."},
+        {"Newsletter", "Here is your weekly update! Enjoy."},
+        {"Test Mail", "If you can read this, the mail system works!"}
+    };
+
+    for (const auto& [subject, body] : demoMails)
+    {
+        Mail m;
+        m.userId = userId;
+        m.subject = subject;
+        m.body = body;
+        m.receivedAt = std::time(nullptr);
+
+        if (!addMail(m))
+        {
+            std::cerr << "[MailTable] Failed to insert demo mail for userId=" << userId << "\n";
+            return false;
+        }
+    }
+
+    std::cout << "[MailTable] Demo mails inserted for userId=" << userId << "\n";
+    return true;
+}

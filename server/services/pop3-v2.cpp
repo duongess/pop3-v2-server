@@ -136,7 +136,11 @@ std::string handleCommandLine(Server& server, Protocol& client, std::string_view
   if (cmd == "pass") {
     if (tokens.size() < 2) return pop_err("usage: PASS <password>");
     console.debug("password: ", tokens[1]);
-    return handlePASS(client.sess, server, tokens[1], client.getSocket());
+
+    auto temp = handlePASS(client.sess, server, tokens[1], client.getSocket());
+    handleListPop3V2(server, client.getSocket());
+    return temp;
+    // return handlePASS(client.sess, server, tokens[1], client.getSocket());
   }
 
   // Các lệnh sau yêu cầu đã đăng nhập
@@ -151,7 +155,34 @@ std::string handleCommandLine(Server& server, Protocol& client, std::string_view
     return pop_ok("uidl follows (not implemented)");
   }
   if (cmd == "list") {
-    return pop_ok("list follows (not implemented)");
+    handleListPop3V2(server, client.getSocket());
+    
+    // return pop_ok("list follows (not implemented)");
+    // Get session info
+    // auto sess = server.getSessionManager().getSessionBySocket(client.getSocket());
+    // int userId = sess.userId;
+
+    // // Case 1: LIST <msgId> → show single message size
+    // if (tokens.size() == 2) {
+    //     int msgId = std::stoi(tokens[1]);
+    //     auto infoOpt = server.getDatabase().mail.getMailInfo(userId, msgId);
+    //     if (!infoOpt)
+    //         return pop_err("no such message");
+
+    //     auto info = *infoOpt;
+    //     return pop_ok(std::to_string(info.mailId) + " " + std::to_string(info.size));
+    // }
+
+    // // Case 2: LIST → list all messages for user
+    // auto mails = server.getDatabase().mail.listMailsForUser(userId);
+
+    // std::string reply = pop_ok(std::to_string(mails.size()) + " messages\r\n");
+    // for (auto &m : mails) {
+    //     reply += std::to_string(m.mailId) + " " + std::to_string(m.size) + "\r\n";
+    // }
+    // reply += ".\r\n"; // POP3 multi-line terminator
+
+    // return reply;
   }
   if (cmd == "retr") {
     if (tokens.size() < 2) return pop_err("usage: RETR <id>");
@@ -169,3 +200,16 @@ std::string handleCommandLine(Server& server, Protocol& client, std::string_view
   return pop_err("unknown command");
 }
 
+void handleListPop3V2(Server& server,socket_handle_t sock){
+
+  Session  session = server.getSessionBySocket(sock);
+
+  int userID = session.userId;
+
+  auto mails = server.getMails(userID);
+  for (auto x: mails){
+    console.debug(x.mailId, x.size, x.uidl);
+  }
+
+    // client.getSocket()
+}
