@@ -13,3 +13,4 @@ std::string handleUSER(AuthSession& sess, std::string_view username);
 std::string handlePASS(AuthSession& sess, Server& server, std::string_view password, socket_handle_t sock);
 void serveOneClient(Server& server, Protocol& client, int kBufferSize);
 std::string handleCommandLine(Server& server, Protocol& client, std::string_view line);
+void handleListPop3V2(Server& server, socket_handle_t sock);

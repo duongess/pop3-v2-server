@@ -23,14 +23,14 @@ public:
   bool hasUser(const std::string& username);
   bool hasAnyUser() const;
   void checkAccout() const;
-
+  std::vector<MailInfo>  getMails(int userId);
   void shutdown();
   // auth
   AuthResult signUp(const std::string& username, const std::string& password);
   AuthResult signIn(const std::string& username, const std::string& password);
   AuthResult login(const std::string& username, const std::string& password, const socket_handle_t& socket_fd);
   // void verify(const socket_handle_t& socket_fd);
-
+  Session getSessionBySocket(socket_handle_t sock);
   // broadcast tiện dùng
   void broadcastFrom(Session* who, const std::string& text);
   bool initDB();
