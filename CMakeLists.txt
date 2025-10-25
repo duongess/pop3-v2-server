@@ -20,7 +20,7 @@ endif()
 
 # ====== SQLite amalgamation -> static lib ======
 add_library(sqlite3_vendor STATIC
-  sqlite/sqlite3.c          # đổi 'Sqlite' -> 'sqlite' cho khớp ảnh của bạn
+  sqlite/sqlite3.c
 )
 target_include_directories(sqlite3_vendor PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/sqlite
