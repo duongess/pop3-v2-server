@@ -56,7 +56,7 @@ int runPop3V2(Server& server, const std::string& host, const std::string& port, 
 int stopPop3V2() {
   console.warn("[Pop3 V2] Stopping Pop3 V2 service...");
   g_tcp_stop = true;
-  g_server.close();
+  g_server.disconnect();
   Protocol::requestStop();
   console.stopping("[Pop3 V2] Pop3 V2 service fully stopped\n");
   return 0;
@@ -120,7 +120,7 @@ void serveOneClient(Server& server, Protocol& client, int kBufferSize) {
       break;
     }
   }
-  client.close();
+  client.disconnect();
 }
 
 std::string handleCommandLine(Server& server, Protocol& client, std::string_view line) {

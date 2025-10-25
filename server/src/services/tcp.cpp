@@ -34,7 +34,7 @@ int runTCP(const std::string& host, const std::string& port, int kBufferSize) {
         console.error("[TCP] Error: ", received.error );
     }
 
-    client.close();
+    client.disconnect();
   }
 
   g_server.clean();
