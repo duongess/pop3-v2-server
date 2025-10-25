@@ -1,5 +1,5 @@
 #pragma once
-#include "../../types/db.h"
+#include "types/db.h"
 #include "sqlite3.h"
 #include "dbconnection.h"
 

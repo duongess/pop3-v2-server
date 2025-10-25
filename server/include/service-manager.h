@@ -4,8 +4,8 @@
 #include <string>
 #include <iostream>
 
-#include "services/index.h"
-#include "../types/services.h"
+#include "index.h"
+#include "types/services.h"
 #include "server.h"
 
 class ServiceManager {
