@@ -24,7 +24,7 @@ RUN mkdir database
 WORKDIR /usr/src/app/build
 
 # Bước 2: Chạy CMake để tạo Makefile (trỏ lên thư mục cha chứa CMakeLists.txt)
-RUN cmake ..
+RUN cmake .. -DCMAKE_C_FLAGS="-DSQLITE_OS_UNIX=1" -DCMAKE_CXX_FLAGS="-DSQLITE_OS_UNIX=1"
 
 # Bước 3: Chạy Make để biên dịch
 RUN make

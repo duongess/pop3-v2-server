@@ -38,55 +38,63 @@ endif()
 
 # ====== Storage layer ======
 add_library(storage
-  server/storage/db.cpp
-  server/storage/dbConnection.cpp
-  server/storage/table.cpp
-  server/storage/user.cpp
-  server/storage/mail.cpp
+  server/src/storage/db.cpp
+  server/src/storage/dbConnection.cpp
+  server/src/storage/table.cpp
+  server/src/storage/user.cpp
+  server/src/storage/mail.cpp
 )
 target_include_directories(storage PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/server/storage
+  ${CMAKE_CURRENT_SOURCE_DIR}/server/src/storage
   ${CMAKE_CURRENT_SOURCE_DIR}/sqlite
 )
 target_link_libraries(storage PUBLIC sqlite3_vendor)
 
 add_library(state
-  client/state/db.cpp
-  client/state/dbConnection.cpp
-  client/state/table.cpp
-  client/state/account.cpp
+  client/src/state/db.cpp
+  client/src/state/dbConnection.cpp
+  client/src/state/table.cpp
+  client/src/state/account.cpp
 )
 target_include_directories(state PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/client/state
+  ${CMAKE_CURRENT_SOURCE_DIR}/client/src/state
   ${CMAKE_CURRENT_SOURCE_DIR}/sqlite
 )
 target_link_libraries(state PUBLIC sqlite3_vendor)
 
 # ====== Server ======
 add_executable(server
-  server/main.cpp
-  server/services/tcp.cpp
-  server/services/pop3-v2.cpp
-  server/session-manager.cpp
-  server/service-manager.cpp
-  server/server.cpp
-  server/utils.cpp
+  server/src/main.cpp
+  server/src/services/tcp.cpp
+  server/src/services/pop3-v2.cpp
+  server/src/session-manager.cpp
+  server/src/service-manager.cpp
+  server/src/server.cpp
+  server/src/utils.cpp
   common/protocol.cpp
   common/utils.cpp
 )
 target_include_directories(server PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/server/storage)
 target_link_libraries(server PRIVATE storage)
+target_compile_definitions(server 
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/server/include
+)
 
 # ====== Client ======
 add_executable(client
-  client/main.cpp
-  client/client.cpp
-  client/utils.cpp
+  client/src/main.cpp
+  client/src/client.cpp
+  client/src/utils.cpp
   common/protocol.cpp
   common/utils.cpp
 )
 target_include_directories(client PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/client/state)
 target_link_libraries(client PRIVATE state)
+target_compile_definitions(client 
+  PUBLIC
+    ${CMAKE_SOURCE_DIR}/client/include
+)
 
 if (WIN32)
   target_link_libraries(server PRIVATE Ws2_32)
