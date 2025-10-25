@@ -1,6 +1,8 @@
-#include <iostream>
+#include "common/utils.h"
 #include "server.h"
-#include "../types/auth.h"
+#include "types/auth.h"
+
+class Server;
 
 void menuServer();
 void registerServer(Server &server);

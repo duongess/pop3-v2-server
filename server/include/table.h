@@ -1,6 +1,6 @@
 #pragma once
-#include "../../types/state.h"
-#include "../../Sqlite/sqlite3.h"
+#include "types/db.h"
+#include "sqlite3.h"
 #include "dbconnection.h"
 
 class Table {

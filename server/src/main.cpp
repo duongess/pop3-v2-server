@@ -1,8 +1,8 @@
 #include "service-manager.h"
-#include "../config/config.h"
+#include "config/config.h"
 #include "server.h"
 #include "utils.h"
-#include "../common/console.h"
+#include "common/console.h"
 
 int main(int argc, char* argv[]) {
   console.reset();

@@ -1,0 +1,12 @@
+/build/
+/database/
+/out/
+/CMakeFiles/
+/CMakeCache.txt
+/*.sln
+/*.vcxproj*
+/.vscode/
+/.idea/
+*.log
+*.exe
+*.pdb

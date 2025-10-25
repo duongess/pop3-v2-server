@@ -9,11 +9,11 @@
 #include <unordered_map>
 #include <string>
 #include <mutex>
-#include "../common/utils.h"
+#include "utils.h"
 #include "session-manager.h"
-#include "../types/auth.h"
-#include "storage/db.h"
-#include "storage/user.h"
+#include "types/auth.h"
+#include "db.h"
+#include "user.h"
 
 class Server {
 public:
