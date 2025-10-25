@@ -53,7 +53,6 @@ target_include_directories(NetworkSystem_Headers INTERFACE
     ${ROOT_DIR}
     # Thêm các thư mục include chính của Server/Client để dễ gọi header
     ${ROOT_DIR}/server/include
-    ${ROOT_DIR}/client/include 
 )
 
 
@@ -73,20 +72,6 @@ target_include_directories(storage PUBLIC
   ${ROOT_DIR}/server/src/storage 
 )
 target_link_libraries(storage PUBLIC sqlite3_vendor NetworkSystem_Headers)
-
-
-# ====== State layer (Client) ======
-add_library(state
-  client/src/state/db.cpp
-  client/src/state/dbConnection.cpp
-  client/src/state/table.cpp
-  client/src/state/account.cpp
-)
-target_include_directories(state PUBLIC
-  ${ROOT_DIR}/client/src/state
-)
-target_link_libraries(state PUBLIC sqlite3_vendor NetworkSystem_Headers)
-
 
 # =================================================================================
 # 4. SERVER EXECUTABLE
@@ -108,18 +93,6 @@ add_executable(server
 target_link_libraries(server PRIVATE storage NetworkSystem_Headers)
 
 
-# ====== Client EXECUTABLE ======
-add_executable(client
-  client/src/main.cpp
-  client/src/client.cpp
-  client/src/utils.cpp
-  common/protocol.cpp
-  common/utils.cpp
-)
-# Client link đến state và NetworkSystem_Headers
-target_link_libraries(client PRIVATE state NetworkSystem_Headers)
-
-
 # =================================================================================
 # 5. LIÊN KẾT HỆ THỐNG ĐA NỀN TẢNG
 # =================================================================================
@@ -127,11 +100,9 @@ target_link_libraries(client PRIVATE state NetworkSystem_Headers)
 if (WIN32)
   # Link thư viện mạng Windows
   target_link_libraries(server PRIVATE Ws2_32)
-  target_link_libraries(client PRIVATE Ws2_32)
 endif()
 
 if (MINGW)
   # Nếu dùng std::filesystem với MinGW cũ
   target_link_libraries(server PRIVATE stdc++fs)
-  target_link_libraries(client PRIVATE stdc++fs)
 endif()
