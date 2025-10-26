@@ -59,7 +59,7 @@
 // Nếu bạn có console riêng thì giữ lại include; nếu không, bỏ dòng dưới:
 #include "console.h"
 extern const Console console;
-const std::string env = std::getenv("ENVIRONMENT");
+const std::string env = "PRODUCT";
 // ===== API =====
 bool net_init();
 
