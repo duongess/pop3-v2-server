@@ -9,12 +9,14 @@
 #include <unordered_map>
 #include <memory>
 #include <atomic>
+#include <csignal>
 #include <mutex>
 #include <thread>
 #include <fstream>
 #include <sstream>
 #include <cstdio>
 #include <iostream>
+#include <unistd.h>
 
 // ===== Platform detection =====
 #if defined(_WIN32) || defined(_WIN64)

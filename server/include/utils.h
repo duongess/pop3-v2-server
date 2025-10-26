@@ -4,7 +4,6 @@
 
 class Server;
 
-void menuServer();
+void menuServer(const std::string& host, const std::string& port);
 void registerServer(Server &server);
 void joinServer(Server &server);
-void confinPassword();

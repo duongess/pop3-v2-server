@@ -1,14 +1,15 @@
 #include "utils.h"
 
 
-void menuServer() {
-    console.log(COLOR::GREEN, "\n=== Network System Menu ===\n");
-    std::cout << "1) Start TCP service\n";
-    std::cout << "2) Start Pop3 V2 service\n";
-    std::cout << "c) Create account\n";
-    std::cout << "j) Join account\n";
-    std::cout << "q) Quit\n> ";
-    return;
+void menuServer(const std::string& host, const std::string& port) {
+    console.log("=== POP3 v2 Server ===");
+    console.log("Host: ", host, "  Port: ", port);
+    console.log("[c] Configure/Register server");
+    console.log("[j] Join (attach to running server info)");
+    console.log("[e] Stop POP3 v2 service");
+    console.log("[r] Restart POP3 v2 service");
+    console.log("[q] Quit");
+    console.log(">> ");
 }
 
 void registerServer(Server &server) {
