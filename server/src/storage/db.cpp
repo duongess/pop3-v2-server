@@ -3,7 +3,7 @@
 DB::DB() 
     : conn(
         // Logic chọn path file DB
-        (env.at("ENVIRONMENT") == "DEVELOPMENT") 
+        (env == "DEVELOPMENT") 
             ? "database/POP3V2.dev.db" 
             : "database/POP3V2.db"
       ),
@@ -13,7 +13,8 @@ DB::DB()
 {
     // Code trong thân constructor:
     std::filesystem::create_directories("database");
-    // Code C++ ở đây thường chỉ dành cho logic KHÔNG PHẢI KHỞI TẠO (như gọi hàm init, log)
+    console.log("Database file: ", env);
+    // Code C++ ở đây thường chỉ dành cho logic KHÔNG PHẢI KHỞI TẠO (như gọi hàm init, log)env
     
     // XÓA CÁC DÒNG GÁN CŨ KHỎI THÂN CONSTRUCTOR:
     // this->user = UserTable(conn);

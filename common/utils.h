@@ -59,8 +59,7 @@
 // Nếu bạn có console riêng thì giữ lại include; nếu không, bỏ dòng dưới:
 #include "console.h"
 extern const Console console;
-std::map<std::string, std::string> load_env_file(const std::string& filename = ".env");
-const std::map<std::string, std::string> env = load_env_file(".env");
+const std::string env = std::getenv("ENVIRONMENT");
 // ===== API =====
 bool net_init();
 
