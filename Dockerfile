@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends libstdc++6 \
 WORKDIR /usr/app
 
 # tạo 2 thư mục ngang hàng như local
+RUN rm -rf /usr/app/database
 RUN mkdir -p /usr/app/build /usr/app/database
 
 # copy đúng binary (đổi tên 'server' nếu target của bạn khác)
