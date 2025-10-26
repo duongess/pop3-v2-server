@@ -6,8 +6,7 @@
 
 class DB {
 public:
-    explicit DB()
-        : conn("database/POP3V2.db"), user(conn), mail(conn) {}
+    DB();
 
     // tiện ích init schema 1 chỗ
     bool initSchema() {

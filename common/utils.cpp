@@ -100,3 +100,37 @@ bool lookLikeHost(const std::string& s) {
     return std::isalnum(c) || c=='.' || c=='-' || c==':';
   });
 }
+
+std::map<std::string, std::string> load_env_file(const std::string& filename) {
+    std::map<std::string, std::string> env_vars;
+    std::ifstream file(filename);
+    std::string line;
+
+    if (!file.is_open()) {
+        std::cerr << "Warning: .env file not found." << std::endl;
+        return env_vars;
+    }
+
+    while (std::getline(file, line)) {
+        // Bỏ qua dòng trống và dòng comment
+        if (line.empty() || line[0] == '#') {
+            continue;
+        }
+
+        // Tìm vị trí của dấu '='
+        size_t delimiter_pos = line.find('=');
+        if (delimiter_pos != std::string::npos) {
+            // Trích xuất KEY
+            std::string key = line.substr(0, delimiter_pos);
+            // Trích xuất VALUE
+            std::string value = line.substr(delimiter_pos + 1);
+
+            // Xóa khoảng trắng thừa (cần thêm logic trim phức tạp hơn trong code thực tế)
+            key.erase(std::remove(key.begin(), key.end(), ' '), key.end());
+            value.erase(0, value.find_first_not_of(" \t\n\r\"'")); // Xóa khoảng trắng/dấu ngoặc kép đầu
+
+            env_vars[key] = value;
+        }
+    }
+    return env_vars;
+}

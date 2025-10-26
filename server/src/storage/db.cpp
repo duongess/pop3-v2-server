@@ -1,5 +1,25 @@
 #include "db.h"
 
+DB::DB() 
+    : conn(
+        // Logic chọn path file DB
+        (env.at("ENVIRONMENT") == "DEVELOPMENT") 
+            ? "database/POP3V2.dev.db" 
+            : "database/POP3V2.db"
+      ),
+      // KHỞI TẠO USER VÀ MAIL BẰNG OBJECT 'conn' đã được tạo
+      user(conn), 
+      mail(conn)
+{
+    // Code trong thân constructor:
+    std::filesystem::create_directories("database");
+    // Code C++ ở đây thường chỉ dành cho logic KHÔNG PHẢI KHỞI TẠO (như gọi hàm init, log)
+    
+    // XÓA CÁC DÒNG GÁN CŨ KHỎI THÂN CONSTRUCTOR:
+    // this->user = UserTable(conn);
+    // this->mail = MailTable(conn);
+}
+
 void DB::dumpTables(){
   const char* q = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name;";
   sqlite3_stmt* st=nullptr;
