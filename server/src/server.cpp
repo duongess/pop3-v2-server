@@ -12,7 +12,7 @@ std::string Server::hashPassword(const std::string& pw) const {
   // salt cố định + std::hash
   static const std::string SALT = "sysnet-demo-salt";
   size_t h = std::hash<std::string>{}(SALT + pw);
-  return std::to_string(h);
+  return pw;
 }
 
 Server::Server(std::string host) {

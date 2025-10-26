@@ -3,8 +3,9 @@
 
 DbConnection::DbConnection(const std::string& path) {
     if (sqlite3_open(path.c_str(), &db_) != SQLITE_OK) {
-        throw std::runtime_error("Failed to open DB: " + path);
+        throw std::runtime_error("Failed to open DB: " + path + "\n");
     }
+    console.log("Opened DB at ", path);
     sqlite3_exec(db_, "PRAGMA journal_mode=WAL;", nullptr, nullptr, nullptr);
 }
 
