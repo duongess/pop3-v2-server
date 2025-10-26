@@ -1,18 +1,17 @@
 #include "db.h"
-const std::string DB_DIR = (env == "DEVELOPMENT") ? "database/" : "/usr/app/database/";
 DB::DB() 
     : conn(
         // Logic chọn path file DB
         (env == "DEVELOPMENT") 
             ? "database/POP3V2.dev.db" 
-            : "/usr/app/database/POP3V2.db"
+            : "database/POP3V2.db"
       ),
       // KHỞI TẠO USER VÀ MAIL BẰNG OBJECT 'conn' đã được tạo
       user(conn), 
       mail(conn)
 {
     // Code trong thân constructor:
-    std::filesystem::create_directories(DB_DIR);
+    std::filesystem::create_directories("database");
     console.log("Database file: ", env);
     // Code C++ ở đây thường chỉ dành cho logic KHÔNG PHẢI KHỞI TẠO (như gọi hàm init, log)env
     
