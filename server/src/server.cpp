@@ -19,6 +19,12 @@ Server::Server(std::string host) {
   this->host_ = host;
   if (initDB()) {
     this->users_ = db.user.getAllUser();
+    console.info("Loaded ", this->users_.size(), " users from DB.");
+    console.debug("Users:");
+    for (const auto& [username, pwHash] : this->users_) {
+      console.debug(" - ", username, " : ", pwHash);
+    }
+
     db.mail.addDemoMailsForUser(1);
   }
 }
