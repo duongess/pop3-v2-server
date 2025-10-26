@@ -1,11 +1,11 @@
 #include "db.h"
-const std::string DB_DIR = (env == "DEVELOPMENT") ? "database/" : "/app/database/";
+const std::string DB_DIR = (env == "DEVELOPMENT") ? "database/" : "/usr/app/database/";
 DB::DB() 
     : conn(
         // Logic chọn path file DB
         (env == "DEVELOPMENT") 
             ? "database/POP3V2.dev.db" 
-            : "/app/database/POP3V2.db"
+            : "/usr/app/database/POP3V2.db"
       ),
       // KHỞI TẠO USER VÀ MAIL BẰNG OBJECT 'conn' đã được tạo
       user(conn), 
