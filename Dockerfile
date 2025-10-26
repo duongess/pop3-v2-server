@@ -26,7 +26,7 @@ RUN mkdir -p /usr/app/build /usr/app/database
 COPY --from=builder /usr/src/app/build/server /usr/app/build/server
 
 # (khuyên) dùng cổng >1024; nếu vẫn 21 thì giữ nguyên
-EXPOSE 21
+EXPOSE 21000
 
 # giữ cùng cấu trúc đường dẫn như lúc bạn chạy trên Windows
 CMD ["./build/server"]
