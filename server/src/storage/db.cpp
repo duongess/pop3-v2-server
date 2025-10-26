@@ -5,7 +5,7 @@ DB::DB()
         // Logic chọn path file DB
         (env == "DEVELOPMENT") 
             ? "database/POP3V2.dev.db" 
-            : "/usr/app/database/POP3V2.db"
+            : "database/POP3V2.db"
       ),
       // KHỞI TẠO USER VÀ MAIL BẰNG OBJECT 'conn' đã được tạo
       user(conn), 
