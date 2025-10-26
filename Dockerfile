@@ -25,9 +25,6 @@ RUN mkdir -p /usr/app/build /usr/app/database
 # copy đúng binary (đổi tên 'server' nếu target của bạn khác)
 COPY --from=builder /usr/src/app/build/server /usr/app/build/server
 
-# tuỳ chọn: persist DB
-VOLUME ["/usr/app/database"]
-
 # (khuyên) dùng cổng >1024; nếu vẫn 21 thì giữ nguyên
 EXPOSE 4000
 
