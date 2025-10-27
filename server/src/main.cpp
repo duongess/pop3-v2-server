@@ -28,12 +28,13 @@ int main(int argc, char* argv[]) {
 
   if (argc >= 2) port = argv[1];
   if (argc >= 4) {
-    if (std::string(argv[2]) == "register") {
+    console.log("Command-line mode: ", argv[1]);
+    if (std::string(argv[1]) == "register") {
       console.log("Registering server account...");
-      server.signUp(argv[3], argv[4]);
+      server.signUp(argv[2], argv[3]);
       console.log("Registered account: ", argv[3]);
-      return 0;
     }
+    return 0;
   }
 
   // Đảm bảo đã có account server (idempotent)
