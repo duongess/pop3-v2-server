@@ -18,9 +18,9 @@ int main(int argc, char* argv[]) {
 
   // Load config
   auto cfg  = Config::defaultConfig();
-  std::string host = cfg.tcp.hostServer;      // hoặc cfg.pop3V2.host nếu có
-  if (argc >= 2) host = argv[1];
+  std::string host = cfg.pop3V2.hostServer;
   std::string port = cfg.pop3V2.port;
+  if (argc >= 2) port = argv[1];
 
   // Core services
   Server server(host);
