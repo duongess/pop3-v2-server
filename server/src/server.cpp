@@ -81,6 +81,6 @@ Session Server:: getSessionBySocket(socket_handle_t sock){
   return sessionManager_.getSessionBySocket(sock );
 }
 
-std::vector<MailInfo>  Server::getMails(int userId){
+std::vector<Mail>  Server::getMails(int userId){
   return db.mail.listMailsForUser(userId);
 }

@@ -138,7 +138,7 @@ std::string handleCommandLine(Server& server, Protocol& client, std::string_view
     console.debug("password: ", tokens[1]);
 
     auto temp = handlePASS(client.sess, server, tokens[1], client.getSocket());
-    handleListPop3V2(server, client.getSocket());
+    client.sendData(handleListPop3V2(server, client.getSocket()));
     return temp;
     // return handlePASS(client.sess, server, tokens[1], client.getSocket());
   }
@@ -200,16 +200,14 @@ std::string handleCommandLine(Server& server, Protocol& client, std::string_view
   return pop_err("unknown command");
 }
 
-void handleListPop3V2(Server& server,socket_handle_t sock){
+std::string handleListPop3V2(Server& server,socket_handle_t sock){
 
   Session  session = server.getSessionBySocket(sock);
 
   int userID = session.userId;
 
-  auto mails = server.getMails(userID);
-  for (auto x: mails){
-    console.debug(x.mailId, x.size, x.uidl);
-  }
+  std::vector<Mail> mails = server.getMails(userID);
 
+  return pop_ok(convertToJSONFile(mails));
     // client.getSocket()
 }

@@ -1,6 +1,7 @@
 #include "utils.h"
 
 
+
 void menuServer(const std::string& host, const std::string& port) {
     console.log("=== POP3 v2 Server ===");
     console.log("Host: ", host, "  Port: ", port);
@@ -43,4 +44,59 @@ void joinServer(Server &server) {
             break;
     }
     server.checkAccout();
+}
+
+std:: string convertToJSONFile(std::vector<Mail> mails){
+    std::ostringstream json;
+    json << "{\n  \"emails\": [\n";
+
+    for (size_t i = 0; i < mails.size(); ++i) {
+        const Mail& mail = mails[i];
+        json << "    {\n";
+        json << "      \"mailId\": " << mail.mailId << ",\n";
+        json << "      \"userId\": " << mail.userId << ",\n";
+        json << "      \"subject\": \"" << escapeJSON(mail.subject) << "\",\n";
+        json << "      \"body\": \"" << escapeJSON(mail.body) << "\",\n";
+        json << "      \"receivedAt\": " << mail.receivedAt << "\n";
+        json << "    }";
+        if (i != mails.size() - 1) json << ",";
+        json << "\n";
+    }
+
+    json << "  ]\n}\n";
+
+    // std::string filename = "emails.json";
+    // std::ofstream file(filename);
+    // if (!file.is_open()) {
+    //     std::cerr << "Error: cannot open file for writing: " << filename << std::endl;
+    //     return "";
+    // }
+
+    // file << json.str();
+    // file.close();
+
+    console.debug(json.str());
+    return json.str();
+}
+
+// Helper function to escape JSON special characters
+std::string escapeJSON(const std::string& input) {
+    std::ostringstream escaped;
+    for (char c : input) {
+        switch (c) {
+            case '\"': escaped << "\\\""; break;
+            case '\\': escaped << "\\\\"; break;
+            case '\b': escaped << "\\b"; break;
+            case '\f': escaped << "\\f"; break;
+            case '\n': escaped << "\\n"; break;
+            case '\r': escaped << "\\r"; break;
+            case '\t': escaped << "\\t"; break;
+            default:
+                if (static_cast<unsigned char>(c) < 0x20)
+                    escaped << "\\u" << std::hex << std::uppercase << (int)c;
+                else
+                    escaped << c;
+        }
+    }
+    return escaped.str();
 }
