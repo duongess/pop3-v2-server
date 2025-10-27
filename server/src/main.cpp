@@ -20,12 +20,21 @@ int main(int argc, char* argv[]) {
   auto cfg  = Config::defaultConfig();
   std::string host = cfg.pop3V2.hostServer;
   std::string port = cfg.pop3V2.port;
-  if (argc >= 2) port = argv[1];
 
   // Core services
   Server server(host);
   ServiceManager sm;
   sm.setServer(server);
+
+  if (argc >= 2) port = argv[1];
+  if (argc >= 4) {
+    if (std::string(argv[2]) == "register") {
+      console.log("Registering server account...");
+      server.signUp(argv[3], argv[4]);
+      console.log("Registered account: ", argv[3]);
+      return 0;
+    }
+  }
 
   // Đảm bảo đã có account server (idempotent)
   if (!server.hasAnyUser()) {
