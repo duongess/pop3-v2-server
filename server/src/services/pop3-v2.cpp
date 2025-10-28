@@ -109,6 +109,7 @@ void serveOneClient(Server& server, Protocol& client, int kBufferSize) {
     Response received = client.receiveData(kBufferSize);
     if (received.status != Status::OK) {
       console.error("[Pop3 V2] Error: " + received.error);
+      break;
     }
     std::string reply = handleCommandLine(server, client, received.data);
     if (!client.sendData(reply)) {
@@ -137,10 +138,7 @@ std::string handleCommandLine(Server& server, Protocol& client, std::string_view
     if (tokens.size() < 2) return pop_err("usage: PASS <password>");
     console.debug("password: ", tokens[1]);
 
-    auto temp = handlePASS(client.sess, server, tokens[1], client.getSocket());
-    client.sendData(handleListPop3V2(server, client.getSocket()));
-    return temp;
-    // return handlePASS(client.sess, server, tokens[1], client.getSocket());
+    return handlePASS(client.sess, server, tokens[1], client.getSocket());
   }
 
   // Các lệnh sau yêu cầu đã đăng nhập
