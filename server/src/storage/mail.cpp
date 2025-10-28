@@ -1,4 +1,5 @@
 #include "mail.h"
+#include <random>
 
 bool MailTable::createTableIfNeeded()
 {
@@ -44,8 +45,11 @@ bool MailTable::addMail(const Mail &m)
         return false;
     }
 
-    // Generate a unique UIDL (e.g., using timestamp + random part)
-    std::string uidl = std::to_string(m.userId) + "_" + std::to_string(m.receivedAt);
+    // Generate a unique UIDL (timestamp + random suffix to avoid collisions when many mails share the same second)
+    std::random_device rd;
+    static thread_local std::mt19937_64 eng(rd());
+    std::uniform_int_distribution<uint64_t> dist;
+    std::string uidl = std::to_string(m.userId) + "_" + std::to_string(m.receivedAt) + "_" + std::to_string(dist(eng));
 
     // Default flag (e.g., "unseen" or empty)
     std::string flags = "unseen";
@@ -108,13 +112,15 @@ std::vector<Mail> MailTable::listMailsForUser(int userId)
         info.mailId = sqlite3_column_int(stmt, 0);
         info.userId = sqlite3_column_int(stmt, 1);
 
-        const unsigned char *subjectText = sqlite3_column_text(stmt, 2);
-        const unsigned char *bodyText = sqlite3_column_text(stmt, 3);
+        const unsigned char *uidlText = sqlite3_column_text(stmt, 2);
+        const unsigned char *subjectText = sqlite3_column_text(stmt, 3);
+        const unsigned char *bodyText = sqlite3_column_text(stmt, 4);
+        const unsigned char *flagsText = sqlite3_column_text(stmt, 5);
 
         info.subject = subjectText ? reinterpret_cast<const char*>(subjectText) : "";
         info.body = bodyText ? reinterpret_cast<const char*>(bodyText) : "";
 
-        info.receivedAt = static_cast<ssize_t>(sqlite3_column_int64(stmt, 4));
+        info.receivedAt = static_cast<ssize_t>(sqlite3_column_int64(stmt, 6));
         list.push_back(info);
     }
 
