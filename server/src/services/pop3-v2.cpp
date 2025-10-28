@@ -155,7 +155,7 @@ std::string handleCommandLine(Server& server, Protocol& client, std::string_view
     return pop_ok("uidl follows (not implemented)");
   }
   if (cmd == "list") {
-    handleListPop3V2(server, client.getSocket());
+    client.sendData(handleListPop3V2(server, client.getSocket()));
     
     // return pop_ok("list follows (not implemented)");
     // Get session info
