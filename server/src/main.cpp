@@ -22,6 +22,7 @@ int main(int argc, char* argv[]) {
   std::string port = cfg.pop3V2.port;
 
   // Core services
+  std::filesystem::create_directories("database");
   Server server(host);
   ServiceManager sm;
   sm.setServer(server);
