@@ -25,7 +25,7 @@ Server::Server(std::string host) {
       console.debug(" - ", username, " : ", pwHash);
     }
 
-    db.mail.addDemoMailsForUser(1);
+    db.mail.addDemoMailsForUser(2);
   }
 }
 
