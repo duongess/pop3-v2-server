@@ -206,8 +206,8 @@ std::string handleListPop3V2(Server& server,socket_handle_t sock){
 
   int userID = session.userId;
 
-  std::vector<Mail> mails = server.getMails(userID);
+  std::vector<MailInfo> mails = server.getMails(userID);
 
-  return pop_ok(convertToJSONFile(mails));
+  return pop_ok(convertToString(mails));
     // client.getSocket()
 }

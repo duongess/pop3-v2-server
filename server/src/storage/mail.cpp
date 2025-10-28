@@ -89,11 +89,11 @@ bool MailTable::deleteFlaggedMails(int userId)
     return ok;
 }
 
-std::vector<Mail> MailTable::listMailsForUser(int userId)
+std::vector<MailInfo> MailTable::listMailsForUser(int userId)
 {
-    std::vector<Mail> list;
+    std::vector<MailInfo> list;
     const char *sql =
-        "SELECT * "
+        "SELECT mailId, uidl, LENGTH(body) "
         "FROM emails WHERE userId = ? AND (flags IS NULL OR flags != 'read')";
 
     sqlite3_stmt *stmt = nullptr;
@@ -108,19 +108,10 @@ std::vector<Mail> MailTable::listMailsForUser(int userId)
 
     while (sqlite3_step(stmt) == SQLITE_ROW)
     {
-        Mail info;
+        MailInfo info;
         info.mailId = sqlite3_column_int(stmt, 0);
-        info.userId = sqlite3_column_int(stmt, 1);
-
-        const unsigned char *uidlText = sqlite3_column_text(stmt, 2);
-        const unsigned char *subjectText = sqlite3_column_text(stmt, 3);
-        const unsigned char *bodyText = sqlite3_column_text(stmt, 4);
-        const unsigned char *flagsText = sqlite3_column_text(stmt, 5);
-
-        info.subject = subjectText ? reinterpret_cast<const char*>(subjectText) : "";
-        info.body = bodyText ? reinterpret_cast<const char*>(bodyText) : "";
-
-        info.receivedAt = static_cast<ssize_t>(sqlite3_column_int64(stmt, 6));
+        info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+        info.size = sqlite3_column_int(stmt, 2);
         list.push_back(info);
     }
 

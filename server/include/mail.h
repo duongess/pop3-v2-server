@@ -19,6 +19,6 @@ public:
     // std::vector<Mail> listByUser(int userId);
     bool addDemoMailsForUser(int userId);
         // 🔹 New for POP3 LIST
-    std::vector<Mail> listMailsForUser(int userId);
+    std::vector<MailInfo> listMailsForUser(int userId);
     std::optional<MailInfo> getMailInfo(int userId, int mailId);
 };
