@@ -9,4 +9,4 @@
 *.log
 *.exe
 *.pdb
-*.dev.db
+*.db
