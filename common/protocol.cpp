@@ -158,9 +158,7 @@ bool Protocol::sendData(const std::string& data) {
 
 Response Protocol::receiveData(const size_t& size) {
     std::vector<char> buffer(size);
-    console.debug(123);
     int bytesReceived = recv(sock, buffer.data(), (int)buffer.size(), 0);
-    console.debug(456);
     if (bytesReceived < 0) {
         int err = WSAGetLastError();
         std::cerr << "[TCP] Receive error, code=" << err << "\n";
