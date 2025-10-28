@@ -23,7 +23,7 @@ public:
   bool hasUser(const std::string& username);
   bool hasAnyUser() const;
   void checkAccout() const;
-  std::vector<MailInfo>  getMails(int userId);
+  std::vector<Mail>  getMails(int userId);
   void shutdown();
   // auth
   AuthResult signUp(const std::string& username, const std::string& password);
