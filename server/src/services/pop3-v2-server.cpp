@@ -5,6 +5,7 @@ Pop3V2Server::Pop3V2Server(unsigned short localPort)
     : TCPServer(localPort) // Gọi hàm khởi tạo của lớp cha
 {
     console.info("POP3 Server is initializing on port ", localPort);
+    initCmd();
 }
 
 Pop3V2Server::~Pop3V2Server()
@@ -42,6 +43,7 @@ unsigned short Pop3V2Server::parseCmd(const std::string& cmdLine, std::string cm
     while (cmd_argc < SERVER_CMD_ARG_NUM && iss.good())
     {
         iss >> cmd_argv[cmd_argc];
+        console.debug(cmd_argv[cmd_argc]);
         cmd_argc++;
     }
 
@@ -50,6 +52,7 @@ unsigned short Pop3V2Server::parseCmd(const std::string& cmdLine, std::string cm
     {
         for(int i = 0; i<this->numCmd; i++)
         {
+            console.debug(cmdNameList[i]);
             if(cmd_argv[0] == cmdNameList[i])
                 return i ;
         }
@@ -82,6 +85,7 @@ void Pop3V2Server::startNewSession(TcpSocket slave)
             // Phan tich lenh
             cmdId = parseCmd(cmdLine, cmdArgv, cmdArgc );
             // Thuc hien lenh trong session
+            console.debug(cmdId);
             doCmd(session,cmdId,cmdArgv,cmdArgc);
         }
         // session finish
