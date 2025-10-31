@@ -16,8 +16,8 @@ public:
      *   Establish a socket connection with the given foreign
      *   address and port
      */
-    void connect(const string &remoteAddress, unsigned short remotePort);
-    void connect(const string &remoteAddress, const string & service);
+    void connect(const std::string &remoteAddress, unsigned short remotePort);
+    void connect(const std::string &remoteAddress, const std::string & service);
 
     /**
      *   Write the given buffer to this socket.  Call connect() before
@@ -26,7 +26,7 @@ public:
     int send(const void *buffer, int bufferLen);
     int send(const char *buffer, int bufferLen);
     int send(const char *str);
-    int send(const string& str);
+    int send(const std::string& str);
 
 
     /**
@@ -44,7 +44,7 @@ public:
     /**
      *   Get the remote address.
      */
-    string getRemoteAddress();
+    std::string getRemoteAddress();
 
     unsigned long getRemoteIPv4Address();
     unsigned long getLocalIPv4Address();
@@ -56,7 +56,7 @@ public:
 
 public:
     TcpSocket();
-    TcpSocket(const string &remoteAddress, unsigned short port);
+    TcpSocket(const std::string &remoteAddress, unsigned short port);
     TcpSocket(int newConnSD);
     ~TcpSocket();
 };

@@ -3,6 +3,7 @@
 // Base class for generic TCP server
 #include "tcpserversocket.h"
 #include "session.h"
+#include <cstdint>
 
 class TCPServer
 {
@@ -14,9 +15,9 @@ protected:
     bool logging;
     unsigned short port;
     unsigned short numCmd;
-    string  cmdNameList[SERVER_CMD_MAX_NUM];
+    std::string  cmdNameList[SERVER_CMD_MAX_NUM];
     CMD_FUNC cmdDoFunc[SERVER_CMD_MAX_NUM];
-    string logFileName;
+    std::string logFileName;
 private:
 
 public:
@@ -28,14 +29,14 @@ public:
     bool isRunning();
     bool isAutoStart() {return autoStart;}
     bool getLogging() {return logging;}
-    const string& getLogFileName() const {return logFileName;}
+    const std::string& getLogFileName() const {return logFileName;}
     virtual bool configServer();
 protected:
     void run();
     virtual void startNewSession(TcpSocket slave)=0;
-    virtual bool loadServerConfig(const string& confFileName);
-    void addCmd(const string& cmdName,CMD_FUNC f);
-    void doCmd(Session* session,uint8_t cmdId, string cmdArgv[], int cmdArgc);
+    virtual bool loadServerConfig(const std::string& confFileName);
+    void addCmd(const std::string& cmdName,CMD_FUNC f);
+    void doCmd(Session* session,uint8_t cmdId, std::string cmdArgv[], int cmdArgc);
     virtual void initCmd();
 };
 

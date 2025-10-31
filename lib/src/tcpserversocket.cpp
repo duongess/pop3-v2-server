@@ -37,7 +37,7 @@ TcpServerSocket::TcpServerSocket(unsigned short localPort, int queueLen):Socket(
     listen(queueLen);
 }
 
-TcpServerSocket::TcpServerSocket(const string &localAddress,
+TcpServerSocket::TcpServerSocket(const std::string &localAddress,
                                  unsigned short localPort, int queueLen): Socket(SOCK_STREAM, IPPROTO_TCP)
 {
 #ifdef __linux__

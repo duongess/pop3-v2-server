@@ -24,12 +24,12 @@ private:
 public:
     Session(const TcpSocket& slave,ServerConfig* conf);
     virtual ~Session();
-    virtual void doUnknown(string cmd_argv[], int cmd_argc)=0;
+    virtual void doUnknown(std::string cmd_argv[], int cmd_argc)=0;
     virtual void reset();
     bool isQuit();
 };
 
-typedef void (Session::*CMD_FUNC)(string [], int);
+typedef void (Session::*CMD_FUNC)(std::string [], int);
 #define FUNC_CAST(p_func_type) static_cast<CMD_FUNC>(p_func_type)
 
 #endif // SESSION_H_

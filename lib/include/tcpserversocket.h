@@ -24,7 +24,7 @@ public:
 public:
     TcpServerSocket();
     ~TcpServerSocket();
-    TcpServerSocket(const string &localAddress, unsigned short port, int queueLength=10);
+    TcpServerSocket(const std::string &localAddress, unsigned short port, int queueLength=10);
     TcpServerSocket(unsigned short port, int queueLength = 10);
     //TcpServerSocket(int newConnSD);
 private:

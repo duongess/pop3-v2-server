@@ -8,7 +8,7 @@
 #ifndef __SOCKET_H__
 #define __SOCKET_H__
 
-#include <string>            // For string
+#include <string>            // For std::string
 #include <exception>         // For exception class
 
 #ifdef __linux__
@@ -18,22 +18,19 @@
 
 #endif // __linux__
 
-using namespace std;
 
-
-
-class SocketException : public exception
+class SocketException : public std::exception
 {
 public:
 
-    SocketException(const string &message, bool inclSysMsg = false) throw();
+    SocketException(const std::string &message, bool inclSysMsg = false) throw();
 
     ~SocketException() throw();
 
     const char *what() const throw();
 
 private:
-    string userMessage;  // Exception message
+    std::string userMessage;  // Exception message
 };
 
 /**
@@ -51,7 +48,7 @@ public:
     /**
      *   Get the local address
      */
-    string getLocalAddress();
+    std::string getLocalAddress();
 
     /**
      *   Get the local port
@@ -68,15 +65,15 @@ public:
      *   Set the local port to the specified port and the local address
      *   to the specified address.
      */
-    void setLocalAddressAndPort(const string &localAddress,
+    void setLocalAddressAndPort(const std::string &localAddress,
                                 unsigned short localPort = 0);
 
     /**
      *   Resolve the specified service for the specified protocol to the
      *   corresponding port number in host byte order
      */
-    static unsigned short resolveService(const string &service,
-                                         const string &protocol = "tcp");
+    static unsigned short resolveService(const std::string &service,
+                                         const std::string &protocol = "tcp");
 
 
     /**
@@ -92,12 +89,12 @@ public:
     /**
      *   Get the address from name
      */
-    static string getAddressFromName(const string& hostname);
+    static std::string getAddressFromName(const std::string& hostname);
 
     /**
      *   Get the name of localhost
      */
-    static string getHostname();
+    static std::string getHostname();
 
     Socket(const Socket& sock);
     void operator=(const Socket& sock);

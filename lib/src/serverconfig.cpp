@@ -1,12 +1,12 @@
-#include <cstring>
+#include <string>
 #include <iostream>
 #include "serverconfig.h"
 
 
-bool readAttribute(const string& strLine, string& name, string& value)
+bool readAttribute(const std::string& strLine, std::string& name, std::string& value)
 {
     size_t p = strLine.find("=");
-    if(p!=string::npos)
+    if(p!=std::string::npos)
     {
         name = strLine.substr(0,p);
         value = strLine.substr(p+1);
@@ -25,23 +25,23 @@ Account::~Account()
 
 }
 
-Account::Account(const string& user)
+Account::Account(const std::string& user)
 {
     this->username = user;
 }
 
 void ServerConfig::addAccount(Account* acc)
 {
-    string username = acc->getUserName();
+    std::string username = acc->getUserName();
     if(!username.empty())
     {
         try
         {
             accMap.insert({username,acc});
         }
-        catch (exception& e)
+        catch (std::exception& e)
         {
-            cerr << e.what() << endl;
+            std::cerr << e.what() << std::endl;
         }
     }
 }
@@ -57,55 +57,55 @@ ServerConfig::~ServerConfig()
     removeAllAccount();
 }
 
-Account* ServerConfig::getAccount(const string& username)
+Account* ServerConfig::getAccount(const std::string& username)
 {
     try
     {
-        unordered_map<string,Account*>::const_iterator got = accMap.find(username);
+        std::unordered_map<std::string,Account*>::const_iterator got = accMap.find(username);
         if (got == accMap.end())
             return NULL;
         else
             return got->second;
     }
-    catch (exception& e)
+    catch (std::exception& e)
     {
-        cerr << e.what() << endl;
+        std::cerr << e.what() << std::endl;
         return NULL;
     }
 }
 
-bool ServerConfig::isValidUser(const string& username)
+bool ServerConfig::isValidUser(const std::string& username)
 {
     return !(accMap.find(username)==accMap.end());
 }
 
-bool ServerConfig::authenticate(const string& username, const string& pass)
+bool ServerConfig::authenticate(const std::string& username, const std::string& pass)
 {
     try
     {
-        unordered_map<string,Account*>::const_iterator it = accMap.find(username);
+        std::unordered_map<std::string,Account*>::const_iterator it = accMap.find(username);
         if(it==accMap.end())
         {
             return false;
         } else
             return it->second->isValidPassword(pass);
     }
-    catch(exception& e)
+    catch(std::exception& e)
     {
-        cerr << e.what() << endl;
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }
 
-void ServerConfig::removeAccount(const string& username)
+void ServerConfig::removeAccount(const std::string& username)
 {
     try
     {
         accMap.erase(username);
     }
-    catch(exception& e)
+    catch(std::exception& e)
     {
-        cerr << e.what() << endl;
+        std::cerr << e.what() << std::endl;
     }
 }
 

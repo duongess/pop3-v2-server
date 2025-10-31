@@ -17,7 +17,7 @@ typedef void raw_type;       // Type used for raw data on this platform
 #include <cstring>
 #include <errno.h>             // For errno
 #include "tcpsocket.h"
-void fillAddr(const string&,unsigned short, sockaddr_in&);
+void fillAddr(const std::string&,unsigned short, sockaddr_in&);
 
 using namespace std;
 
@@ -31,7 +31,7 @@ TcpSocket::TcpSocket(int newConnSD) : Socket(newConnSD)
 {
 }
 
-TcpSocket::TcpSocket(const string &remoteAddress, unsigned short port) : Socket(SOCK_STREAM, IPPROTO_TCP)
+TcpSocket::TcpSocket(const std::string &remoteAddress, unsigned short port) : Socket(SOCK_STREAM, IPPROTO_TCP)
 {
     connect(remoteAddress, port);
 }
@@ -87,7 +87,7 @@ bool TcpSocket::isAlive()
 }
 
 
-void TcpSocket::connect(const string &remoteAddress,
+void TcpSocket::connect(const std::string &remoteAddress,
                         unsigned short port)
 {
     // Get the address of the requested host
@@ -109,8 +109,8 @@ void TcpSocket::connect(const string &remoteAddress,
     }
 }
 
-void TcpSocket::connect(const string &remoteAddress,
-                        const string& service)
+void TcpSocket::connect(const std::string &remoteAddress,
+                        const std::string& service)
 {
     // Get the address of the requested host
     sockaddr_in destAddr;
@@ -176,7 +176,7 @@ int TcpSocket::send(const char *str)
     return r;
 }
 
-int TcpSocket::send(const string& str)
+int TcpSocket::send(const std::string& str)
 {
     int r = ::send(sockDesc, (raw_type *)str.c_str(),str.size(), 0);
     if ( r < 0)
@@ -339,7 +339,7 @@ void TcpSocket::shutdown(int type)
 #endif // _WIN32
 }
 
-string TcpSocket::getRemoteAddress()
+std::string TcpSocket::getRemoteAddress()
 {
     sockaddr_in addr;
     unsigned int addr_len = sizeof(addr);

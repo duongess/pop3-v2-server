@@ -33,19 +33,19 @@ bool TCPServer::configServer()
     return true;
 }
 
-bool TCPServer::loadServerConfig(const string& confFileName)
+bool TCPServer::loadServerConfig(const std::string& confFileName)
 {
     return true;
 }
 
-void TCPServer::addCmd(const string& cmdName, CMD_FUNC f)
+void TCPServer::addCmd(const std::string& cmdName, CMD_FUNC f)
 {
     this->cmdDoFunc[this->numCmd]=f;
     this->cmdNameList[this->numCmd] = cmdName;
     this->numCmd++;
 }
 
-void TCPServer::doCmd(Session* session, uint8_t cmdId, string cmd_argv[], int cmd_argc)
+void TCPServer::doCmd(Session* session, uint8_t cmdId, std::string cmd_argv[], int cmd_argc)
 {
     if(cmdId == SERVER_CMD_UNKNOWN)
         session->doUnknown(cmd_argv, cmd_argc);
@@ -71,7 +71,7 @@ bool TCPServer::start()
     }
     catch(SocketException& e)
     {
-        cerr << e.what() << endl;
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }
@@ -98,7 +98,7 @@ bool TCPServer::restart()
     }
     catch(SocketException& e)
     {
-        cerr << e.what() << endl;
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }
@@ -128,7 +128,7 @@ void TCPServer::run()
         {
             if(!running)
                 return;
-            cerr << e.what() << endl;
+            std::cerr << e.what() << std::endl;
             continue;
         }
         // Create a thread and add to ThreadPool
@@ -141,9 +141,9 @@ void TCPServer::run()
             this->startNewSession(slave);
 #endif // _CONCURRENCE_H*/
         }
-        catch (exception& e)
+        catch (std::exception& e)
         {
-            cerr << "Khong tao duoc thread thuc hien Session\n" ;
+            std::cerr << "Khong tao duoc thread thuc hien Session\n" ;
         }
 
     }
