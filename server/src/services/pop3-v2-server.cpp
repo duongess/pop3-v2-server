@@ -7,10 +7,6 @@ Pop3V2Server::Pop3V2Server(unsigned short localPort)
     console.info("POP3 Server is initializing on port ", localPort);
 }
 
-void Pop3V2Server::initCmd() {
-    
-}
-
 Pop3V2Server::~Pop3V2Server()
 {
     console.stopping("POP3 Server is shutting down.");
@@ -61,48 +57,39 @@ unsigned short Pop3V2Server::parseCmd(const std::string& cmdLine, std::string cm
     return SERVER_CMD_UNKNOWN;
 }
 
+void Pop3V2Server::initCmd() {
+    addCmd("USER", FUNC_CAST(&Pop3V2Session::doUser));
+}
 
 void Pop3V2Server::startNewSession(TcpSocket slave)
 {
-    // 1. Tạo đối tượng session mới trên heap
-    Pop3V2Session* session = new Pop3V2Session(slave, conf);
-    
-    // 2. Chuẩn bị các biến cục bộ cho vòng lặp
+    // create new session
+    Pop3V2Session* session = new Pop3V2Session(slave,conf);
     std::string cmdLine;
-    std::string cmdArgv[SERVER_CMD_ARG_NUM]; //
-    int cmdArgc;
-    unsigned short cmdId;
-    int cmdLen;
-
+    std::string cmdArgv[SERVER_CMD_ARG_NUM];
+    int cmdArgc;  // number of command arguments
+    unsigned short cmdId; // ID of command
+    int cmdLen; // length of a SMTP command
     try
     {
-        // 3. Gửi lời chào (greeting) CỤ THỂ của POP3
-
-        // 4. Bắt đầu vòng lặp chính của session (giống hệt SMTP)
-        while(!session->isQuit()) //
+        while(!session->isQuit())
         {
-            // 5. Đọc lệnh từ client (dùng helper)
-            cmdLen = readCmd(slave, cmdLine);
-            
-            // Nếu recvLine trả về 0 hoặc lỗi, client đã ngắt kết nối
-            if (cmdLen <= 0)
+            // Nhan lenh
+            cmdLen = readCmd(slave,cmdLine);
+            // Kiem tra lenh
+            if(cmdLen <= 0)
                 break;
-
-            // 6. Phân tích lệnh (dùng helper)
-            cmdId = parseCmd(cmdLine, cmdArgv, cmdArgc);
-
-            // 7. Thực thi lệnh (dùng hàm của TCPServer)
-            doCmd(session, cmdId, cmdArgv, cmdArgc); //
+            // Phan tich lenh
+            cmdId = parseCmd(cmdLine, cmdArgv, cmdArgc );
+            // Thuc hien lenh trong session
+            doCmd(session,cmdId,cmdArgv,cmdArgc);
         }
-        
-        // 8. Dọn dẹp khi vòng lặp kết thúc (client thoát bình thường)
+        // session finish
         delete session;
-        Console::info("Session closed for: ", slave.getRemoteAddress());
     }
-    catch(SocketException& e)
+    catch(SocketException&e)
     {
-        // 9. Dọn dẹp nếu có lỗi socket (client ngắt đột ngột)
-        Console::error("SocketException for ", slave.getRemoteAddress(), ": ", e.what());
+        console.error(e.what());
         delete session;
     }
 }

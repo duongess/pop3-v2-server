@@ -6,6 +6,5 @@ class Pop3V2Session : public Session {
         virtual void doUnknown(std::string cmd_argv[], int cmd_argc) override;
         // virtual void reset() override;
 
-    private:
-
+        void doUser(std::string cmd_argv[], int cmd_argc);
 };
