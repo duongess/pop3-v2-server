@@ -27,10 +27,10 @@ bool UserTable::createUser(const std::string& username, const std::string& passw
     return rc == SQLITE_DONE;
 }
 
-std::unordered_map<std::string, std::string> UserTable::getAllUser() {
-    const char* sql = "SELECT username, passwordHash FROM users ORDER BY userId;";
+std::vector<SetUser> UserTable::getAllUser() {
+    const char* sql = "SELECT userId, username, passwordHash FROM users ORDER BY userId;";
 
-    std::unordered_map<std::string, std::string> out;
+    std::vector<SetUser> out;
     sqlite3_stmt* st = nullptr;
     int prep = sqlite3_prepare_v2(conn_.get(), sql, -1, &st, nullptr);
     if (prep != SQLITE_OK) {
@@ -41,9 +41,10 @@ std::unordered_map<std::string, std::string> UserTable::getAllUser() {
     while (true) {
         int rc = sqlite3_step(st);
         if (rc == SQLITE_ROW) {
-            const unsigned char* u = sqlite3_column_text(st, 0);
-            const unsigned char* p = sqlite3_column_text(st, 1);
-            out[reinterpret_cast<const char*>(u)] = reinterpret_cast<const char*>(p);
+            const unsigned int i = sqlite3_column_int(st, 0);
+            const unsigned char* u = sqlite3_column_text(st, 1);
+            const unsigned char* p = sqlite3_column_text(st, 2);
+            out.push_back(SetUser(i, reinterpret_cast<const char*>(u), reinterpret_cast<const char*>(p)));
         } else if (rc == SQLITE_DONE) {
             break;
         } else {

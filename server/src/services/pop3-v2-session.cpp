@@ -100,7 +100,6 @@ void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
 
         // Trả lời client
         slave.send("-ERR Invalid password\r\n");
-        console.debug(918231273283);
     }
 }
 
@@ -115,6 +114,7 @@ void Pop3V2Session::doLiss(std::string cmd_argv[], int cmd_argc) {
     }
 
     // (Giả sử đã check, hoặc account.userId chỉ có khi đã đăng nhập)
+    console.debug(this->account->userId);
     std::vector<MailInfo> emails = this->pop3V2Conf->getMailsForUser(this->account->userId);
 
     if (!emails.empty()) {
@@ -132,7 +132,7 @@ void Pop3V2Session::doLiss(std::string cmd_argv[], int cmd_argc) {
         std::string log_msg = "[LIST] Found 0 emails for user '" + std::to_string(this->account->userId) + "'.";
         
         // Dùng console.info() sẽ hợp lý hơn là error()
-        console.info(log_msg); 
+        console.error(log_msg); 
         
         // (RẤT QUAN TRỌNG) Vẫn phải trả lời +OK cho client
         // Đây là phản hồi chuẩn của POP3 cho trường hợp 0 email

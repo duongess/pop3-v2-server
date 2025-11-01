@@ -7,6 +7,14 @@ Pop3V2ServerConfig::Pop3V2ServerConfig() {
     }
 }
 
+void Pop3V2Account::setUserId(const int userId) {
+    this->userId = userId;
+}
+
+void Pop3V2Account::setHost(const std::string& host) {
+    this->host = host;
+}
+
 bool Pop3V2Account::isLocked() {
     return this->locked;
 }
@@ -27,19 +35,18 @@ bool Pop3V2ServerConfig::loadAccountsFromFile(const std::string& filePath) {
 
 bool Pop3V2ServerConfig::loadAccountsFromDB()
 {
-    std::unordered_map<std::string, std::string> usersFromDB = this->db.user.getAllUser();
+    std::vector<SetUser> usersFromDB = this->db.user.getAllUser();
 
     this->removeAllAccount(); //
 
     // Lặp qua map lấy từ DB
-    for (const auto& pair : usersFromDB) 
+    for (const SetUser user : usersFromDB) 
     {
-        std::string username = pair.first;
-        std::string password = pair.second;
 
         Pop3V2Account* acc = new Pop3V2Account();
-        acc->setUserName(username);
-        acc->setPassword(password);
+        acc->setUserId(user.userId);
+        acc->setUserName(user.username);
+        acc->setPassword(user.password);
         
         this->addAccount(acc);
     }

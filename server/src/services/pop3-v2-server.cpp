@@ -84,7 +84,7 @@ void Pop3V2Server::startNewSession(TcpSocket slave)
             cmdLen = readCmd(slave,cmdLine);
             // Kiem tra lenh
             if(cmdLen <= 0) {
-                console.running("Session is disconnecting...")
+                console.running("Session is disconnecting...");
                 session->disconnect();
                 break;
             }

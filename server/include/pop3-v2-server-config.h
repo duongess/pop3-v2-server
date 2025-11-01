@@ -9,6 +9,10 @@ public:
     int userId;
     std::string host;
 
+    void setUserId(const int userId);
+    void setHost(const std::string& host);
+    
+
     bool isLocked();
     void lock();
     void unLock();
