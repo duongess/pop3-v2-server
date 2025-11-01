@@ -53,6 +53,7 @@ target_include_directories(NetworkSystem_Headers INTERFACE
     ${ROOT_DIR}
     # Thêm các thư mục include chính của Server/Client để dễ gọi header
     ${ROOT_DIR}/server/include
+    ${ROOT_DIR}/lib/include
 )
 
 
@@ -78,16 +79,11 @@ target_link_libraries(storage PUBLIC sqlite3_vendor NetworkSystem_Headers)
 # =================================================================================
 
 # ====== Server ======
+file(GLOB_RECURSE SERVER_SOURCES "server/src/*.cpp")
+file(GLOB LIB_SOURCES "lib/src/*.cpp")
 add_executable(server
-  server/src/main.cpp
-  server/src/services/tcp.cpp
-  server/src/services/pop3-v2.cpp
-  server/src/session-manager.cpp
-  server/src/service-manager.cpp
-  server/src/server.cpp
-  server/src/utils.cpp
-  common/protocol.cpp
-  common/utils.cpp
+    ${SERVER_SOURCES}
+    ${LIB_SOURCES}
 )
 # Server link đến storage và NetworkSystem_Headers
 target_link_libraries(server PRIVATE storage NetworkSystem_Headers)

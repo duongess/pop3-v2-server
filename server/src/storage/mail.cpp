@@ -110,7 +110,7 @@ std::vector<MailInfo> MailTable::listMailsForUser(int userId)
     {
         MailInfo info;
         info.mailId = sqlite3_column_int(stmt, 0);
-        info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+        // info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
         info.size = sqlite3_column_int(stmt, 2);
         list.push_back(info);
     }
@@ -141,7 +141,7 @@ std::optional<MailInfo> MailTable::getMailInfo(int userId, int mailId)
     if (sqlite3_step(stmt) == SQLITE_ROW)
     {
         info.mailId = sqlite3_column_int(stmt, 0);
-        info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+        // info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
         info.size = sqlite3_column_int(stmt, 2);
         sqlite3_finalize(stmt);
         return info;
