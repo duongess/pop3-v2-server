@@ -62,6 +62,9 @@ unsigned short Pop3V2Server::parseCmd(const std::string& cmdLine, std::string cm
 
 void Pop3V2Server::initCmd() {
     addCmd("USER", FUNC_CAST(&Pop3V2Session::doUser));
+    addCmd("PASS", FUNC_CAST(&Pop3V2Session::doPass));
+    addCmd("LIST", FUNC_CAST(&Pop3V2Session::doLiss));
+    
 }
 
 void Pop3V2Server::startNewSession(TcpSocket slave)

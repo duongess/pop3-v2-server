@@ -2,8 +2,11 @@
 #include "pop3-v2-server-config.h"
 
 class Pop3V2Session : public Session {
+    private:
+        std::string username;
+        Pop3V2ServerConfig* pop3V2Conf;
     public: 
-        Pop3V2Session(TcpSocket& slave, ServerConfig* conf);
+        Pop3V2Session(TcpSocket& slave, Pop3V2ServerConfig* conf);
         virtual void doUnknown(std::string cmd_argv[], int cmd_argc) override;
         // virtual void reset() override;
 
