@@ -2,6 +2,7 @@
 #define POP3V2ACCOUNT_H_
 #include "serverconfig.h"
 #include "db.h"
+#include "types/db.h"
 
 class Pop3V2Account: public Account {
 public:
@@ -19,9 +20,9 @@ class Pop3V2ServerConfig: public ServerConfig {
 
     public:
         Pop3V2ServerConfig();
-        bool verify(std::string username, std::string password);
         bool loadAccountsFromDB();
         bool loadAccountsFromFile(const std::string& filePath) override;
+        // std::vector<MailInfo> getMailsForUser(const std::string )
 };
 
 #endif

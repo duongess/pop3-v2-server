@@ -11,10 +11,6 @@ bool Pop3V2ServerConfig::loadAccountsFromFile(const std::string& filePath) {
     return true;
 }
 
-bool Pop3V2ServerConfig::verify(std::string username, std::string password) {
-    return true;
-}
-
 // Trong tệp pop3-v2-server-config.cpp
 
 bool Pop3V2ServerConfig::loadAccountsFromDB()

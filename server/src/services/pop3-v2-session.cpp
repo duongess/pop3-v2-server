@@ -65,7 +65,7 @@ void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
     std::string pass = cmd_argv[1];
 
     // (3) Xác thực password
-    if (this->pop3V2Conf->verify(this->username, pass)) {
+    if (this->pop3V2Conf->authenticate(this->username, pass)) {
         console.success("[AUTH] OK - User '" + this->username + "' authenticated successfully.");
         
         // (Chuyển state sang TRANSACTION)
