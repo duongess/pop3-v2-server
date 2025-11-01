@@ -83,12 +83,14 @@ void Pop3V2Server::startNewSession(TcpSocket slave)
             // Nhan lenh
             cmdLen = readCmd(slave,cmdLine);
             // Kiem tra lenh
-            if(cmdLen <= 0)
+            if(cmdLen <= 0) {
+                console.running("Session is disconnecting...")
+                session->disconnect();
                 break;
+            }
             // Phan tich lenh
             cmdId = parseCmd(cmdLine, cmdArgv, cmdArgc );
             // Thuc hien lenh trong session
-            console.debug(cmdId);
             doCmd(session,cmdId,cmdArgv,cmdArgc);
         }
         // session finish

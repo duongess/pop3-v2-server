@@ -7,6 +7,18 @@ Pop3V2ServerConfig::Pop3V2ServerConfig() {
     }
 }
 
+bool Pop3V2Account::isLocked() {
+    return this->locked;
+}
+
+void Pop3V2Account::lock() {
+    locked = true;
+}
+
+void Pop3V2Account::unLock() {
+    locked = false;
+}
+
 bool Pop3V2ServerConfig::loadAccountsFromFile(const std::string& filePath) {
     return true;
 }
@@ -32,4 +44,8 @@ bool Pop3V2ServerConfig::loadAccountsFromDB()
         this->addAccount(acc);
     }
     return true;
+}
+
+std::vector<MailInfo> Pop3V2ServerConfig::getMailsForUser(const int& userId) {
+    return this->db.mail.listMailsForUser(userId);
 }

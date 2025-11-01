@@ -9,9 +9,12 @@ public:
     int userId;
     std::string host;
 
-private:
-    
+    bool isLocked();
+    void lock();
+    void unLock();
 
+private:
+    bool locked = false;
 };
 
 class Pop3V2ServerConfig: public ServerConfig {
@@ -22,7 +25,7 @@ class Pop3V2ServerConfig: public ServerConfig {
         Pop3V2ServerConfig();
         bool loadAccountsFromDB();
         bool loadAccountsFromFile(const std::string& filePath) override;
-        // std::vector<MailInfo> getMailsForUser(const std::string )
+        std::vector<MailInfo> getMailsForUser(const int& userId);
 };
 
 #endif

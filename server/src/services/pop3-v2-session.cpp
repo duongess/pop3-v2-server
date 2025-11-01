@@ -1,11 +1,16 @@
 #include "pop3-v2-session.h"
 
-Pop3V2Session::Pop3V2Session(TcpSocket& slave, Pop3V2ServerConfig* conf) : Session(slave, conf), pop3V2Conf(conf) {
+Pop3V2Session::Pop3V2Session(TcpSocket& slave, Pop3V2ServerConfig* conf) : Session(slave, conf), pop3V2Conf(conf), account(nullptr) {
     // slave.send("+OK POP3 server ready\r\n");
 }
 
 void Pop3V2Session::doUnknown(std::string cmd_argv[], int cmd_argc) {
     slave.send("-ERR Unknown command\r\n");
+}
+
+void Pop3V2Session::disconnect() {
+    if (this->account)
+        this->account->unLock();
 }
 
 void Pop3V2Session::doUser(std::string cmd_argv[], int cmd_argc) {
@@ -70,6 +75,20 @@ void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
         
         // (Chuyển state sang TRANSACTION)
         // (Gọi logic lock maildrop)
+        Account* baseAccountPtr = this->pop3V2Conf->getAccount(this->username);
+        this->account = dynamic_cast<Pop3V2Account*>(baseAccountPtr);
+
+        if (this->account->isLocked()) {
+            // Nếu tài khoản đã bị khóa (do 1 session khác)
+            console.error("[AUTH] FAILED - User '" + this->username + "' maildrop is locked.");
+            slave.send("-ERR maildrop locked\r\n");
+            
+            // Reset lại, bắt đăng nhập lại từ đầu
+            this->account = nullptr; 
+            this->username = "";
+            return;
+        }
+        this->account->lock();
 
         // Trả lời client
         slave.send("+OK Authentication successful, maildrop locked and ready.\r\n");
@@ -81,8 +100,42 @@ void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
 
         // Trả lời client
         slave.send("-ERR Invalid password\r\n");
+        console.debug(918231273283);
     }
 }
+
 void Pop3V2Session::doLiss(std::string cmd_argv[], int cmd_argc) {
     
+    // BẠN NÊN KIỂM TRA TRẠNG THÁI TRƯỚC!
+    // Lệnh LIST chỉ hợp lệ sau khi đã đăng nhập (TRANSACTION state)
+    if (this->username == "") {
+        console.error("[LIST] FAILED - Client not authenticated.");
+        slave.send("-ERR Command only valid in TRANSACTION state\r\n");
+        return;
+    }
+
+    // (Giả sử đã check, hoặc account.userId chỉ có khi đã đăng nhập)
+    std::vector<MailInfo> emails = this->pop3V2Conf->getMailsForUser(this->account->userId);
+
+    if (!emails.empty()) {
+        // (1) SỬA LỖI NỐI CHUỖI: Dùng std::to_string
+        std::string log_msg = "[LIST] Found " + std::to_string(emails.size()) + 
+                              " emails for user '" + std::to_string(this->account->userId) + "'. Sending list.";
+        
+        console.success(log_msg); // Dùng success như code gốc của bạn
+        
+        // Giả sử convertToString(emails) trả về 1 chuỗi đã định dạng POP3
+        slave.send("+OK " + convertToString(emails));
+
+    } else {
+        // (2) SỬA LOGIC ELSE: Đây là trường hợp 0 email, không phải lỗi
+        std::string log_msg = "[LIST] Found 0 emails for user '" + std::to_string(this->account->userId) + "'.";
+        
+        // Dùng console.info() sẽ hợp lý hơn là error()
+        console.info(log_msg); 
+        
+        // (RẤT QUAN TRỌNG) Vẫn phải trả lời +OK cho client
+        // Đây là phản hồi chuẩn của POP3 cho trường hợp 0 email
+        slave.send("-ERR 0 messages\r\n.\r\n");
+    }
 }

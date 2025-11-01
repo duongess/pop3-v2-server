@@ -22,3 +22,6 @@
 
 #include "console.h"
 extern const Console console;
+
+#include "types/db.h"
+std::string convertToString(std::vector<MailInfo> mails);
