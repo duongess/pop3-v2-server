@@ -1,5 +1,7 @@
 #include <iostream>
 #include <sstream>
+#include <thread>
+#include <chrono>
 #include "cli.h"
 
 
@@ -164,6 +166,34 @@ void CmdLineInterface::run(char* initArgv[], int initArgc)
     }
 }
 
+void CmdLineInterface::runRailway(char* initArgv[], int initArgc) {
+    std::string cmd;  // command std::string
+    std::string cmdArgArray[CMD_MAX_ARG_NUM]; // arguments
+    int cmdArgCount;
+    unsigned short cid;  // command id
+    bRunning = true;
+    bool isRun;
+    while (bRunning) // chu trinh chinh - MAIN LOOP
+    {
+        // hien thi dau nhac lenh
+        showCmdPrompt();
+        if (!isRun) {
+            isRun = true;
+            if (initArgc < 2) break;
+            for (int i = 1; i < initArgc; ++i) {
+                cmd += initArgv[i];
+                cmd += " "; 
+            }
+            std::cout << cmd << std::endl;
+        } else
+            // nhap lenh
+            readCmd(cmd);
+        // phan tich lenh
+        cid = parseCmd(cmd, cmdArgArray, cmdArgCount);
+        // thuc hien lenh va hien thi ket qua
+        doCmd(cid, cmdArgArray, cmdArgCount);
+    }
+}
 
 void CmdLineInterface::run()
 {

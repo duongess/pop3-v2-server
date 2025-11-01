@@ -43,6 +43,7 @@ public:
     void addCmd(const std::string& name, CLI_CMD_FUNC f);
     void run(); // run without initial arguments
     void run(char* initArgv[], int initArgc); // run with initial arguments
+    void runRailway(char* initArgv[], int initArgc);
 protected:
     virtual void initCmd();
     virtual void initConsole();

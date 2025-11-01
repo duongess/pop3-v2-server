@@ -2,6 +2,6 @@
 
 int main(int argc, char* argv[]) {
   ServerCLI server;
-  server.run();
+  server.runRailway(argv, argc);
   return 0;
 }
