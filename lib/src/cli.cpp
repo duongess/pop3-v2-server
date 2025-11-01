@@ -185,6 +185,10 @@ void CmdLineInterface::runRailway(char* initArgv[], int initArgc) {
         cid = parseCmd(cmd, cmdArgArray, cmdArgCount);
         // thuc hien lenh va hien thi ket qua
         doCmd(cid, cmdArgArray, cmdArgCount);
+        while (bRunning)
+        {
+            /* code */
+        }
     };
 }
 
