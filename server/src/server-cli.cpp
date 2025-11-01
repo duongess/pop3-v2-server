@@ -5,12 +5,12 @@ ServerCLI::ServerCLI():CmdLineInterface("server>")
     console.log("Simple SMTP Server v1.0\n");
     initCmd();
     pop3V2 = new Pop3V2Server(21);
-    // if(!pop3V2->configServer())
-    // {
-    //     console.error("Cannot load server configuration");
-    //     delete pop3V2;
-    //     exit(-1);
-    // }
+    if(!pop3V2->configServer())
+    {
+        console.error("Cannot load server configuration");
+        delete pop3V2;
+        exit(-1);
+    }
 
 }
 ServerCLI::~ServerCLI()

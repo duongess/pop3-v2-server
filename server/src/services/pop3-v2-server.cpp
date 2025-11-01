@@ -97,3 +97,14 @@ void Pop3V2Server::startNewSession(TcpSocket slave)
         delete session;
     }
 }
+
+bool Pop3V2Server::configServer() {
+    this->conf = new Pop3V2ServerConfig();
+    bool loadOK = this->conf->loadAccountsFromDB();
+    if (!loadOK) {
+        Console::error("Khong load duoc file config tai khoan!");
+        return false;
+    }
+    this->conf->setTimeOut(30);
+    return true;
+}

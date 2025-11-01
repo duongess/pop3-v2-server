@@ -10,4 +10,13 @@ void Pop3V2Session::doUnknown(std::string cmd_argv[], int cmd_argc) {
 
 void Pop3V2Session::doUser(std::string cmd_argv[], int cmd_argc) {
     slave.send("+OK OK User");
+    
+}
+
+void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
+
+}
+
+void Pop3V2Session::doLiss(std::string cmd_argv[], int cmd_argc) {
+    
 }
