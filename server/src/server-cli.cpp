@@ -2,7 +2,7 @@
 
 ServerCLI::ServerCLI():CmdLineInterface("server>")
 {
-    console.log("Simple SMTP Server v1.0\n");
+    console.log("Simple POP3-V2 Server v1.0\n");
     initCmd();
     pop3V2 = new Pop3V2Server(21);
     if(!pop3V2->configServer())
@@ -28,17 +28,17 @@ void ServerCLI::initCmd()
 void ServerCLI::doStart(std::string cmd_argv[], int cmd_argc)
 {
     if(pop3V2->isRunning())
-        console.running("SMTP server is running!");
+        console.running("POP3-V2 server is running!");
     else if(pop3V2->start())
-        console.success("SMTP Server started");
+        console.success("POP3-V2 Server started");
     else
-        console.error("SMTP Server failed to start");
+        console.error("POP3-V2 Server failed to start");
 }
 
 void ServerCLI::doStop(std::string cmd_argv[], int cmd_argc)
 {
     pop3V2->stop();
-    console.stopping("SMTP Server stopped");
+    console.stopping("POP3-V2 Server stopped");
 }
 
 void ServerCLI::doHelp(std::string cmd_argv[], int cmd_argc)

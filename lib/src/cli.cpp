@@ -187,7 +187,7 @@ void CmdLineInterface::runRailway(char* initArgv[], int initArgc) {
         doCmd(cid, cmdArgArray, cmdArgCount);
         while (bRunning)
         {
-            /* code */
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     };
 }
