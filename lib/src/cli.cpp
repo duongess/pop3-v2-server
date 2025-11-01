@@ -173,26 +173,19 @@ void CmdLineInterface::runRailway(char* initArgv[], int initArgc) {
     unsigned short cid;  // command id
     bRunning = true;
     bool isRun;
-    while (bRunning) // chu trinh chinh - MAIN LOOP
-    {
-        // hien thi dau nhac lenh
+    if (initArgc < 2) {
+        this->run();
+    } else {
         showCmdPrompt();
-        if (!isRun) {
-            isRun = true;
-            if (initArgc < 2) break;
-            for (int i = 1; i < initArgc; ++i) {
-                cmd += initArgv[i];
-                cmd += " "; 
-            }
-            std::cout << cmd << std::endl;
-        } else
-            // nhap lenh
-            readCmd(cmd);
-        // phan tich lenh
+        for (int i = 1; i < initArgc; ++i) {
+            cmd += initArgv[i];
+            cmd += " "; 
+        }
+        std::cout << cmd << std::endl;
         cid = parseCmd(cmd, cmdArgArray, cmdArgCount);
         // thuc hien lenh va hien thi ket qua
         doCmd(cid, cmdArgArray, cmdArgCount);
-    }
+    };
 }
 
 void CmdLineInterface::run()
