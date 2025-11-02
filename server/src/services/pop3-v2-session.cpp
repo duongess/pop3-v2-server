@@ -1,7 +1,7 @@
 #include "pop3-v2-session.h"
 
 Pop3V2Session::Pop3V2Session(TcpSocket& slave, Pop3V2ServerConfig* conf) : Session(slave, conf), pop3V2Conf(conf), account(nullptr) {
-    // slave.send("+OK POP3 server ready\r\n");
+    slave.send("+OK POP3 server ready\r\n");
 }
 
 void Pop3V2Session::doUnknown(std::string cmd_argv[], int cmd_argc) {
