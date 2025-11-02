@@ -281,6 +281,7 @@ int TcpSocket::recvLine(char* buffer, int bufLen)
 {
     int total_byte_recv = 0;
     int byte_recv;
+    std::cout << "recv client" << std::endl;
     byte_recv = ::recv(sockDesc, buffer+total_byte_recv, 1, 0);
     while(byte_recv > 0)
     {
