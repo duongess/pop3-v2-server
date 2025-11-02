@@ -135,7 +135,7 @@ void TCPServer::run()
         try
         {
 #ifdef _CONCURRENT_MT_SERVER_
-            std::thread t(&TCPServer::startNewSession,this,slave);
+            std::thread t(&TCPServer::startNewSession,this, std::move(slave));
             t.detach();
 #else
             this->startNewSession(slave);
