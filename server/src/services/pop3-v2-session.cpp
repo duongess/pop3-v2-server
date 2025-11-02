@@ -125,7 +125,7 @@ void Pop3V2Session::doLiss(std::string cmd_argv[], int cmd_argc) {
         console.success(log_msg); // Dùng success như code gốc của bạn
         
         // Giả sử convertToString(emails) trả về 1 chuỗi đã định dạng POP3
-        slave.send("+OK " + convertToString(emails));
+        slave.send("+OK\r\n" + convertToString(emails));
 
     } else {
         // (2) SỬA LOGIC ELSE: Đây là trường hợp 0 email, không phải lỗi
