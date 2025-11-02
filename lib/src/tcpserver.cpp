@@ -117,12 +117,16 @@ void TCPServer::run()
         // chap nhan ket noi tu client
         try
         {
+            std::cout << "[DEBUG] Waiting at accept()..." << std::endl;
             slave = master.accept();
+            std::cout << "[DEBUG] ACCEPTED OK. Getting conf..." << std::endl;
             int timeout = conf->getTimeout();
+            std::cout << "[DEBUG] GOT CONF OK. Setting timeout..." << std::endl;
             if(timeout)
             {
                 slave.setTimeOut(timeout);
             }
+            std::cout << "[DEBUG] SET TIMEOUT OK. Creating thread..." << std::endl;
         }
         catch(SocketException& e)
         {
