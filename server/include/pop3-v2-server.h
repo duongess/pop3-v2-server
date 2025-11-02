@@ -8,7 +8,6 @@
 
 class Pop3V2Server: public TCPServer {
 public:
-    Pop3V2ServerConfig * conf;
     Pop3V2Server(unsigned short localPort);
     virtual ~Pop3V2Server();
     virtual bool configServer() override;
