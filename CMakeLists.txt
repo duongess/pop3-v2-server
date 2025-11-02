@@ -62,12 +62,9 @@ target_include_directories(NetworkSystem_Headers INTERFACE
 # =================================================================================
 
 # ====== Storage layer ======
+file(GLOB_RECURSE STORAGE_SOURCES "server/src/storage/*.cpp")
 add_library(storage
-  server/src/storage/db.cpp
-  server/src/storage/dbConnection.cpp
-  server/src/storage/table.cpp
-  server/src/storage/user.cpp
-  server/src/storage/mail.cpp
+  ${STORAGE_SOURCES}
 )
 target_include_directories(storage PUBLIC
   ${ROOT_DIR}/server/src/storage 
