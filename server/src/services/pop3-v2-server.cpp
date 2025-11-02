@@ -69,8 +69,10 @@ void Pop3V2Server::initCmd() {
 
 void Pop3V2Server::startNewSession(TcpSocket slave)
 {
+    console.info("Creating a new session");
     // create new session
     Pop3V2Session* session = new Pop3V2Session(slave,conf);
+    console.debug(456789212);
     std::string cmdLine;
     std::string cmdArgv[SERVER_CMD_ARG_NUM];
     int cmdArgc;  // number of command arguments
