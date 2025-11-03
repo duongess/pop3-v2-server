@@ -28,6 +28,7 @@ class Pop3V2ServerConfig: public ServerConfig {
     public:
         Pop3V2ServerConfig();
         bool loadAccountsFromDB();
+        bool createAccount(const std::string& username, const std::string& password);
         bool loadAccountsFromFile(const std::string& filePath) override;
         std::vector<MailInfo> getMailsForUser(const int& userId);
 };

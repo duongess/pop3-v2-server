@@ -22,6 +22,8 @@ protected:
 private:
     void doStart(std::string cmd_argv[], int cmd_argc);
     void doStop(std::string cmd_argv[], int cmd_argc);
+
+    void doSignUp(std::string cmd_argv[], int cmd_argc);
     // void doStatus(std::string cmd_argv[], int cmd_argc);
     // void doRestart(std::string cmd_argv[], int cmd_argc);
     void doHelp(std::string cmd_argv[], int cmd_argc);

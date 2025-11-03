@@ -31,7 +31,9 @@ bool Pop3V2ServerConfig::loadAccountsFromFile(const std::string& filePath) {
     return true;
 }
 
-// Trong tệp pop3-v2-server-config.cpp
+bool Pop3V2ServerConfig::createAccount(const std::string& username, const std::string& password) {
+    return this->db.user.createUser(username, password);
+}
 
 bool Pop3V2ServerConfig::loadAccountsFromDB()
 {

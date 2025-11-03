@@ -23,6 +23,7 @@ void ServerCLI::initCmd()
     addCmd("start",CLI_CAST(&ServerCLI::doStart));
     addCmd("stop",CLI_CAST(&ServerCLI::doStop));
     addCmd("help", CLI_CAST(&ServerCLI::doHelp));
+    addCmd("signup", CLI_CAST(&ServerCLI::doSignUp));
 }
 
 void ServerCLI::doStart(std::string cmd_argv[], int cmd_argc)
@@ -46,5 +47,14 @@ void ServerCLI::doHelp(std::string cmd_argv[], int cmd_argc)
     console.log("Cac lenh cua chuong trinh: \n");
     console.log("- start               Bat server\n");
     console.log("- stop                Tat server\n");
-    console.log("- quit                Thoat\n");
+    console.log("- help                ho tro\n");
+    console.log("- signup <username> <password>              tao tai khoan");
+}
+
+void ServerCLI::doSignUp(std::string cmd_argv[], int cmd_argc) {
+    if (this->pop3V2->pop3V2Conf->createAccount(cmd_argv[1], cmd_argv[2])) {
+        console.success("Create user: " + cmd_argv[1]);
+    } else {
+        console.error("Create fail");
+    }
 }
