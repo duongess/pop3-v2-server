@@ -48,7 +48,7 @@ void ServerCLI::doHelp(std::string cmd_argv[], int cmd_argc)
     console.log("- start               Bat server\n");
     console.log("- stop                Tat server\n");
     console.log("- help                ho tro\n");
-    console.log("- signup <username> <password>              tao tai khoan");
+    console.log("- signup <username> <password>              tao tai khoan\n");
 }
 
 void ServerCLI::doSignUp(std::string cmd_argv[], int cmd_argc) {
