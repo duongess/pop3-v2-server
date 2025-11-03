@@ -14,5 +14,5 @@ class Pop3V2Session : public Session {
 
         void doUser(std::string cmd_argv[], int cmd_argc);
         void doPass(std::string cmd_argv[], int cmd_argc);
-        void doLiss(std::string cmd_argv[], int cmd_argc);
+        void doList(std::string cmd_argv[], int cmd_argc);
 };
