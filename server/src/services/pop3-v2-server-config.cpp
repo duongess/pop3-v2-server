@@ -5,7 +5,6 @@ Pop3V2ServerConfig::Pop3V2ServerConfig() {
         console.log("Load DB \n");
         db.dumpTables();
     }
-    this->setTimeOut(1800000);
 }
 
 void Pop3V2Account::setUserId(const int userId) {

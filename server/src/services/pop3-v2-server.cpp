@@ -72,7 +72,6 @@ void Pop3V2Server::startNewSession(TcpSocket slave)
     console.info("Creating a new session");
     // create new session
     Pop3V2Session* session = new Pop3V2Session(slave, pop3V2Conf);
-    console.debug(456789212);
     std::string cmdLine;
     std::string cmdArgv[SERVER_CMD_ARG_NUM];
     int cmdArgc;  // number of command arguments
@@ -108,11 +107,11 @@ void Pop3V2Server::startNewSession(TcpSocket slave)
 bool Pop3V2Server::configServer() {
     this->conf = new Pop3V2ServerConfig();
     this->pop3V2Conf = static_cast<Pop3V2ServerConfig*>(this->conf);
+    pop3V2Conf->setTimeOut(1800);
     bool loadOK = this->pop3V2Conf->loadAccountsFromDB();
     if (!loadOK) {
         Console::error("Khong load duoc file config tai khoan!");
         return false;
     }
-    this->pop3V2Conf->setTimeOut(30);
     return true;
 }
