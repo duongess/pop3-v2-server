@@ -1,4 +1,5 @@
 #include "pop3-v2-session.h"
+#include "user.h" // for generateTokenSimple
 
 Pop3V2Session::Pop3V2Session(TcpSocket& slave, Pop3V2ServerConfig* conf) : Session(slave, conf), pop3V2Conf(conf), account(nullptr) {
     slave.send("+OK POP3 server ready\r\n");
@@ -90,6 +91,13 @@ void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
         }
         this->account->lock();
 
+        std::string username = this->username;
+        // ✅ Automatically generate a session token
+        std::string token = generateSessionToken(username);
+        account->setSessionToken(token);
+        pop3V2Conf->setSessionToken(account->userId, token);
+
+
         // Trả lời client
         slave.send("+OK Authentication successful, maildrop locked and ready.\r\n");
     } else {
@@ -138,4 +146,15 @@ void Pop3V2Session::doList(std::string cmd_argv[], int cmd_argc) {
         // Đây là phản hồi chuẩn của POP3 cho trường hợp 0 email
         slave.send("-ERR 0 messages\r\n.\r\n");
     }
+}
+
+// Helper function to generate token
+std::string Pop3V2Session::generateSessionToken(const std::string& username) {
+        std::string seed = username + std::to_string(std::time(nullptr)) + std::to_string(rand());
+    std::hash<std::string> hasher;
+    size_t value = hasher(seed);
+
+    std::ostringstream oss;
+    oss << std::hex << std::setw(16) << std::setfill('0') << value;
+    return oss.str(); // hex-style token, no external libs
 }

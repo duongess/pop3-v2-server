@@ -32,6 +32,10 @@ bool Pop3V2ServerConfig::loadAccountsFromFile(const std::string& filePath) {
 }
 
 bool Pop3V2ServerConfig::createAccount(const std::string& username, const std::string& password) {
+    // Account* acc = new Pop3V2Account();
+    // acc->setUserName(username);
+    // acc->setPassword(password);
+    // this->addAccount(acc);
     return this->db.user.createUser(username, password);
 }
 
@@ -49,7 +53,7 @@ bool Pop3V2ServerConfig::loadAccountsFromDB()
         acc->setUserId(user.userId);
         acc->setUserName(user.username);
         acc->setPassword(user.password);
-        
+        acc->setSessionToken(user.sessionToken);
         this->addAccount(acc);
     }
     return true;
@@ -57,4 +61,8 @@ bool Pop3V2ServerConfig::loadAccountsFromDB()
 
 std::vector<MailInfo> Pop3V2ServerConfig::getMailsForUser(const int& userId) {
     return this->db.mail.listMailsForUser(userId);
+}
+
+bool Pop3V2ServerConfig::setSessionToken(int userId, const std::string& token) {
+    return this->db.user.setSessionToken(userId, token);
 }
