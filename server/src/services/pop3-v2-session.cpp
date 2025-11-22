@@ -111,7 +111,7 @@ void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
     }
 }
 
-void Pop3V2Session::doLiss(std::string cmd_argv[], int cmd_argc) {
+void Pop3V2Session::doList(std::string cmd_argv[], int cmd_argc) {
     
     // BẠN NÊN KIỂM TRA TRẠNG THÁI TRƯỚC!
     // Lệnh LIST chỉ hợp lệ sau khi đã đăng nhập (TRANSACTION state)
