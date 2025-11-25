@@ -10,8 +10,9 @@ void Pop3V2Session::doUnknown(std::string cmd_argv[], int cmd_argc) {
 }
 
 void Pop3V2Session::disconnect() {
-    if (this->account)
+    if (this->account){
         this->account->unLock();
+    }
 }
 
 void Pop3V2Session::doUser(std::string cmd_argv[], int cmd_argc) {
@@ -92,10 +93,15 @@ void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
         this->account->lock();
 
         std::string username = this->username;
-        // ✅ Automatically generate a session token
-        std::string token = generateSessionToken(username);
-        account->setSessionToken(token);
-        pop3V2Conf->setSessionToken(account->userId, token);
+
+        // create queue
+        // std::queue<MailInfo> mailQueue = this->mailQueue;
+
+        console.debug("Loading mails for user: " + username);
+        // Load mails to queue
+        this->pop3V2Conf->loadMailsToQueue(this->account->userId, this->mailQueue);
+
+        //
 
 
         // Trả lời client
@@ -123,7 +129,15 @@ void Pop3V2Session::doList(std::string cmd_argv[], int cmd_argc) {
 
     // (Giả sử đã check, hoặc account.userId chỉ có khi đã đăng nhập)
     console.debug(this->account->userId);
-    std::vector<MailInfo> emails = this->pop3V2Conf->getMailsForUser(this->account->userId);
+    // std::vector<MailInfo> emails = this->pop3V2Conf->getMailsForUser(this->account->userId);
+
+    // response list mails from queue to client and delete data in queue
+    std::vector<MailInfo> emails ;
+    while (!this->mailQueue.empty()) {
+        emails.push_back(this->mailQueue.front());
+        this->mailQueue.pop();
+    }
+
 
     if (!emails.empty()) {
         // (1) SỬA LỖI NỐI CHUỖI: Dùng std::to_string
@@ -148,13 +162,3 @@ void Pop3V2Session::doList(std::string cmd_argv[], int cmd_argc) {
     }
 }
 
-// Helper function to generate token
-std::string Pop3V2Session::generateSessionToken(const std::string& username) {
-        std::string seed = username + std::to_string(std::time(nullptr)) + std::to_string(rand());
-    std::hash<std::string> hasher;
-    size_t value = hasher(seed);
-
-    std::ostringstream oss;
-    oss << std::hex << std::setw(16) << std::setfill('0') << value;
-    return oss.str(); // hex-style token, no external libs
-}

@@ -53,7 +53,6 @@ bool Pop3V2ServerConfig::loadAccountsFromDB()
         acc->setUserId(user.userId);
         acc->setUserName(user.username);
         acc->setPassword(user.password);
-        acc->setSessionToken(user.sessionToken);
         this->addAccount(acc);
     }
     return true;
@@ -63,6 +62,21 @@ std::vector<MailInfo> Pop3V2ServerConfig::getMailsForUser(const int& userId) {
     return this->db.mail.listMailsForUser(userId);
 }
 
-bool Pop3V2ServerConfig::setSessionToken(int userId, const std::string& token) {
-    return this->db.user.setSessionToken(userId, token);
+void Pop3V2ServerConfig::loadMailsToQueue(const int& userId, std::queue<MailInfo>& mailQueue) {
+    std::vector<MailInfo> mails = this->db.mail.listMailsForUser(userId);
+
+    for (const MailInfo& mail : mails) {
+        console.debug("Loading mail ID: " + std::to_string(mail.mailId) + " Size: " + std::to_string(mail.size));
+        
+        mailQueue.push(mail);
+    }
+}
+
+std::vector<MailInfo> getMailsFromQueue(std::queue<MailInfo>& mailQueue){
+    std::vector<MailInfo> mails;
+    while (!mailQueue.empty()) {
+        mails.push_back(mailQueue.front());
+        mailQueue.pop();
+    }
+    return mails;
 }
