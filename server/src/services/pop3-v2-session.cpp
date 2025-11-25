@@ -10,8 +10,9 @@ void Pop3V2Session::doUnknown(std::string cmd_argv[], int cmd_argc) {
 }
 
 void Pop3V2Session::disconnect() {
-    if (this->account)
+    if (this->account){
         this->account->unLock();
+    }
 }
 
 void Pop3V2Session::doUser(std::string cmd_argv[], int cmd_argc) {
@@ -93,6 +94,15 @@ void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
 
         std::string username = this->username;
 
+        // create queue
+        // std::queue<MailInfo> mailQueue = this->mailQueue;
+
+        console.debug("Loading mails for user: " + username);
+        // Load mails to queue
+        this->pop3V2Conf->loadMailsToQueue(this->account->userId, this->mailQueue);
+
+        //
+
 
         // Trả lời client
         slave.send("+OK Authentication successful, maildrop locked and ready.\r\n");
@@ -119,7 +129,15 @@ void Pop3V2Session::doList(std::string cmd_argv[], int cmd_argc) {
 
     // (Giả sử đã check, hoặc account.userId chỉ có khi đã đăng nhập)
     console.debug(this->account->userId);
-    std::vector<MailInfo> emails = this->pop3V2Conf->getMailsForUser(this->account->userId);
+    // std::vector<MailInfo> emails = this->pop3V2Conf->getMailsForUser(this->account->userId);
+
+    // response list mails from queue to client and delete data in queue
+    std::vector<MailInfo> emails ;
+    while (!this->mailQueue.empty()) {
+        emails.push_back(this->mailQueue.front());
+        this->mailQueue.pop();
+    }
+
 
     if (!emails.empty()) {
         // (1) SỬA LỖI NỐI CHUỖI: Dùng std::to_string

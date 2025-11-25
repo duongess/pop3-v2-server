@@ -3,6 +3,8 @@
 #include "serverconfig.h"
 #include "db.h"
 #include "types/db.h"
+#include <queue>
+
 
 class Pop3V2Account: public Account {
 public:
@@ -18,9 +20,6 @@ public:
     void lock();
     void unLock();
 
-    void setSessionToken(const std::string& token) { this->sessionToken = token; }
-    const std::string& getSessionToken() const { return this->sessionToken; }
-
 private:
     bool locked = false;
 };
@@ -35,7 +34,8 @@ class Pop3V2ServerConfig: public ServerConfig {
         bool createAccount(const std::string& username, const std::string& password);
         bool loadAccountsFromFile(const std::string& filePath) override;
         std::vector<MailInfo> getMailsForUser(const int& userId);
-
+        void loadMailsToQueue(const int& userId, std::queue<MailInfo>& mailQueue);
+        std::vector<MailInfo> getMailsFromQueue(std::queue<MailInfo>& mailQueue);
 };
 
 #endif
