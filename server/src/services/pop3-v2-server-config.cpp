@@ -62,7 +62,3 @@ bool Pop3V2ServerConfig::loadAccountsFromDB()
 std::vector<MailInfo> Pop3V2ServerConfig::getMailsForUser(const int& userId) {
     return this->db.mail.listMailsForUser(userId);
 }
-
-bool Pop3V2ServerConfig::setSessionToken(int userId, const std::string& token) {
-    return this->db.user.setSessionToken(userId, token);
-}

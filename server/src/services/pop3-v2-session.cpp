@@ -92,10 +92,6 @@ void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
         this->account->lock();
 
         std::string username = this->username;
-        // ✅ Automatically generate a session token
-        std::string token = generateSessionToken(username);
-        account->setSessionToken(token);
-        pop3V2Conf->setSessionToken(account->userId, token);
 
 
         // Trả lời client
@@ -148,13 +144,3 @@ void Pop3V2Session::doList(std::string cmd_argv[], int cmd_argc) {
     }
 }
 
-// Helper function to generate token
-std::string Pop3V2Session::generateSessionToken(const std::string& username) {
-        std::string seed = username + std::to_string(std::time(nullptr)) + std::to_string(rand());
-    std::hash<std::string> hasher;
-    size_t value = hasher(seed);
-
-    std::ostringstream oss;
-    oss << std::hex << std::setw(16) << std::setfill('0') << value;
-    return oss.str(); // hex-style token, no external libs
-}

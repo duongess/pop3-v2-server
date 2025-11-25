@@ -35,8 +35,7 @@ class Pop3V2ServerConfig: public ServerConfig {
         bool createAccount(const std::string& username, const std::string& password);
         bool loadAccountsFromFile(const std::string& filePath) override;
         std::vector<MailInfo> getMailsForUser(const int& userId);
-        bool setSessionToken(int userId, const std::string& token);
-        // bool validToken(int userId, const std::string& token);
+
 };
 
 #endif

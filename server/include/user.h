@@ -15,8 +15,5 @@ public:
     // std::optional<User> findByUsername(...); v.v.
     std::vector<SetUser> getAllUser();
 
-    // lightweight token generator (implemented in storage/user.cpp)
-    std::string generateTokenSimple(const std::string& username);
-    bool setSessionToken(int userId, const std::string& token);
 
 };

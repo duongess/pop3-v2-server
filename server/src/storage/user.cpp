@@ -6,7 +6,6 @@ bool UserTable::createTableIfNeeded() {
         "  userId INTEGER PRIMARY KEY AUTOINCREMENT,"
         "  username TEXT UNIQUE NOT NULL,"
         "  passwordHash TEXT NOT NULL,"
-        "  session_token TEXT,"
         "  createdAt INTEGER NOT NULL"
         ");";
     return exec_sql(conn_.get(), sql, "Users");
@@ -29,7 +28,7 @@ bool UserTable::createUser(const std::string& username, const std::string& passw
 }
 
 std::vector<SetUser> UserTable::getAllUser() {
-    const char* sql = "SELECT userId, username, passwordHash, session_token FROM users ORDER BY userId;";
+    const char* sql = "SELECT userId, username, passwordHash FROM users ORDER BY userId;";
 
     std::vector<SetUser> out;
     sqlite3_stmt* st = nullptr;
@@ -83,28 +82,4 @@ int UserTable::findUserId(const std::string& username, const std::string& passwo
     return -1;
 }
 
-std::string generateTokenSimple(const std::string& username) {
-    std::string seed = username + std::to_string(std::time(nullptr)) + std::to_string(rand());
-    std::hash<std::string> hasher;
-    size_t value = hasher(seed);
 
-    std::ostringstream oss;
-    oss << std::hex << std::setw(16) << std::setfill('0') << value;
-    return oss.str(); // hex-style token, no external libs
-}
-
-bool UserTable::setSessionToken(int userId, const std::string& token) {
-    const char* sql = "UPDATE users SET session_token = ? WHERE userId = ?;";
-    sqlite3_stmt* st = nullptr;
-    if (sqlite3_prepare_v2(conn_.get(), sql, -1, &st, nullptr) != SQLITE_OK) {
-        console.error("[DB] prepare failed: ", sqlite3_errmsg(conn_.get()));
-        return false;
-    }
-
-    sqlite3_bind_text(st, 1, token.c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int(st, 2, userId);
-
-    int rc = sqlite3_step(st);
-    sqlite3_finalize(st);
-    return rc == SQLITE_DONE;
-}
