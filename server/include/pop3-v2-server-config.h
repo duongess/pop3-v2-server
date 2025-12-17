@@ -9,12 +9,9 @@
 class Pop3V2Account: public Account {
 public:
     int userId;
-    std::string host;
-    std::string sessionToken;
+    std::queue<MailInfo> liveQueue;
 
-    void setUserId(const int userId);
-    void setHost(const std::string& host);
-    
+    void setUserId(const int userId);    
 
     bool isLocked();
     void lock();
@@ -27,6 +24,7 @@ private:
 class Pop3V2ServerConfig: public ServerConfig {
     private:
         DB db;
+        std::map<int, Pop3V2Account*> toIdMap;
 
     public:
         Pop3V2ServerConfig();
@@ -34,8 +32,7 @@ class Pop3V2ServerConfig: public ServerConfig {
         bool createAccount(const std::string& username, const std::string& password);
         bool loadAccountsFromFile(const std::string& filePath) override;
         std::vector<MailInfo> getMailsForUser(const int& userId);
-        void loadMailsToQueue(const int& userId, std::queue<MailInfo>& mailQueue);
-        std::vector<MailInfo> getMailsFromQueue(std::queue<MailInfo>& mailQueue);
+        void loadMailsToQueue(const int& userId);
 };
 
 #endif

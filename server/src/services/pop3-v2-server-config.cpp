@@ -11,10 +11,6 @@ void Pop3V2Account::setUserId(const int userId) {
     this->userId = userId;
 }
 
-void Pop3V2Account::setHost(const std::string& host) {
-    this->host = host;
-}
-
 bool Pop3V2Account::isLocked() {
     return this->locked;
 }
@@ -46,9 +42,11 @@ bool Pop3V2ServerConfig::loadAccountsFromDB()
     {
 
         Pop3V2Account* acc = new Pop3V2Account();
+        acc->setUserId(user.userId);
         acc->setUserName(user.username);
         acc->setPassword(user.password);
         this->addAccount(acc);
+        this->toIdMap[user.userId] = acc;
     }
     return true;
 }
@@ -57,21 +55,11 @@ std::vector<MailInfo> Pop3V2ServerConfig::getMailsForUser(const int& userId) {
     return this->db.mail.listMailsForUser(userId);
 }
 
-void Pop3V2ServerConfig::loadMailsToQueue(const int& userId, std::queue<MailInfo>& mailQueue) {
+void Pop3V2ServerConfig::loadMailsToQueue(const int& userId) {
     std::vector<MailInfo> mails = this->db.mail.listMailsForUser(userId);
 
     for (const MailInfo& mail : mails) {
         console.debug("Loading mail ID: " + std::to_string(mail.mailId) + " Size: " + std::to_string(mail.size));
-        
-        mailQueue.push(mail);
+        this->toIdMap[userId]->liveQueue.push(mail);
     }
-}
-
-std::vector<MailInfo> getMailsFromQueue(std::queue<MailInfo>& mailQueue){
-    std::vector<MailInfo> mails;
-    while (!mailQueue.empty()) {
-        mails.push_back(mailQueue.front());
-        mailQueue.pop();
-    }
-    return mails;
 }

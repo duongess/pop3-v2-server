@@ -94,12 +94,9 @@ void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
 
         std::string username = this->username;
 
-        // create queue
-        // std::queue<MailInfo> mailQueue = this->mailQueue;
-
         console.debug("Loading mails for user: " + username);
         // Load mails to queue
-        this->pop3V2Conf->loadMailsToQueue(this->account->userId, this->mailQueue);
+        this->pop3V2Conf->loadMailsToQueue(this->account->userId);
 
         //
 
@@ -118,8 +115,6 @@ void Pop3V2Session::doPass(std::string cmd_argv[], int cmd_argc) {
 }
 
 void Pop3V2Session::doList(std::string cmd_argv[], int cmd_argc) {
-    
-    // BẠN NÊN KIỂM TRA TRẠNG THÁI TRƯỚC!
     // Lệnh LIST chỉ hợp lệ sau khi đã đăng nhập (TRANSACTION state)
     if (this->username == "") {
         console.error("[LIST] FAILED - Client not authenticated.");
@@ -127,15 +122,13 @@ void Pop3V2Session::doList(std::string cmd_argv[], int cmd_argc) {
         return;
     }
 
-    // (Giả sử đã check, hoặc account.userId chỉ có khi đã đăng nhập)
     console.debug(this->account->userId);
-    // std::vector<MailInfo> emails = this->pop3V2Conf->getMailsForUser(this->account->userId);
 
     // response list mails from queue to client and delete data in queue
-    std::vector<MailInfo> emails ;
-    while (!this->mailQueue.empty()) {
-        emails.push_back(this->mailQueue.front());
-        this->mailQueue.pop();
+    std::vector<MailInfo> emails = std::vector<MailInfo>();
+    while (!this->account->liveQueue.empty()) {
+        emails.push_back(this->account->liveQueue.front());
+        this->account->liveQueue.pop();
     }
 
 
@@ -144,20 +137,15 @@ void Pop3V2Session::doList(std::string cmd_argv[], int cmd_argc) {
         std::string log_msg = "[LIST] Found " + std::to_string(emails.size()) + 
                               " emails for user '" + std::to_string(this->account->userId) + "'. Sending list.";
         
-        console.success(log_msg); // Dùng success như code gốc của bạn
+        console.success(log_msg);
         
-        // Giả sử convertToString(emails) trả về 1 chuỗi đã định dạng POP3
         slave.send("+OK\r\n" + convertToString(emails));
 
     } else {
         // (2) SỬA LOGIC ELSE: Đây là trường hợp 0 email, không phải lỗi
         std::string log_msg = "[LIST] Found 0 emails for user '" + std::to_string(this->account->userId) + "'.";
-        
-        // Dùng console.info() sẽ hợp lý hơn là error()
         console.error(log_msg); 
         
-        // (RẤT QUAN TRỌNG) Vẫn phải trả lời +OK cho client
-        // Đây là phản hồi chuẩn của POP3 cho trường hợp 0 email
         slave.send("-ERR 0 messages\r\n.\r\n");
     }
 }
