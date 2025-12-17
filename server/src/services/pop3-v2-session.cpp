@@ -11,6 +11,7 @@ void Pop3V2Session::doUnknown(std::string cmd_argv[], int cmd_argc) {
 
 void Pop3V2Session::disconnect() {
     if (this->account){
+        this->account->liveQueue = std::queue<MailInfo>(); // clear mail queue
         this->account->unLock();
     }
 }
