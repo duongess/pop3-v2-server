@@ -24,6 +24,8 @@ void ServerCLI::initCmd()
     addCmd("stop",CLI_CAST(&ServerCLI::doStop));
     addCmd("help", CLI_CAST(&ServerCLI::doHelp));
     addCmd("signup", CLI_CAST(&ServerCLI::doSignUp));
+    addCmd("addmail", CLI_CAST(&ServerCLI::doAddMail));
+    addCmd("addmaildemo", CLI_CAST(&ServerCLI::doAddMailDemo));
 }
 
 void ServerCLI::doStart(std::string cmd_argv[], int cmd_argc)
@@ -49,12 +51,23 @@ void ServerCLI::doHelp(std::string cmd_argv[], int cmd_argc)
     console.log("- stop                Tat server\n");
     console.log("- help                ho tro\n");
     console.log("- signup <username> <password>              tao tai khoan\n");
+    console.log("- addmail             them mail\n");
+    console.log("- addmaildemo         them mail demo\n");
 }
 
 void ServerCLI::doSignUp(std::string cmd_argv[], int cmd_argc) {
     if (this->pop3V2->pop3V2Conf->createAccount(cmd_argv[1], cmd_argv[2])) {
+        this->pop3V2->pop3V2Conf->loadAccountsFromDB();
         console.success("Create user: " + cmd_argv[1]);
     } else {
         console.error("Create fail");
     }
+}
+
+void ServerCLI::doAddMail(std::string cmd_argv[], int cmd_argc) {
+    // Implementation for adding mail
+}
+
+void ServerCLI::doAddMailDemo(std::string cmd_argv[], int cmd_argc) {
+    // Implementation for adding demo mail
 }

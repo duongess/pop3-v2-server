@@ -32,10 +32,6 @@ bool Pop3V2ServerConfig::loadAccountsFromFile(const std::string& filePath) {
 }
 
 bool Pop3V2ServerConfig::createAccount(const std::string& username, const std::string& password) {
-    // Account* acc = new Pop3V2Account();
-    // acc->setUserName(username);
-    // acc->setPassword(password);
-    // this->addAccount(acc);
     return this->db.user.createUser(username, password);
 }
 
@@ -50,7 +46,6 @@ bool Pop3V2ServerConfig::loadAccountsFromDB()
     {
 
         Pop3V2Account* acc = new Pop3V2Account();
-        acc->setUserId(user.userId);
         acc->setUserName(user.username);
         acc->setPassword(user.password);
         this->addAccount(acc);
