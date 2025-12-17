@@ -31,6 +31,13 @@ bool Pop3V2ServerConfig::createAccount(const std::string& username, const std::s
     return this->db.user.createUser(username, password);
 }
 
+bool Pop3V2ServerConfig::getAccountLockedStatus(const int& userId) {
+    if (this->toIdMap.find(userId) != this->toIdMap.end()) {
+        return this->toIdMap[userId]->isLocked();
+    }
+    return false;
+}
+
 bool Pop3V2ServerConfig::loadAccountsFromDB()
 {
     std::vector<SetUser> usersFromDB = this->db.user.getAllUser();
@@ -62,4 +69,12 @@ void Pop3V2ServerConfig::loadMailsToQueue(const int& userId) {
         console.debug("Loading mail ID: " + std::to_string(mail.mailId) + " Size: " + std::to_string(mail.size));
         this->toIdMap[userId]->liveQueue.push(mail);
     }
+}
+
+void Pop3V2ServerConfig::addMailToUserQueue(const int& userId, const MailInfo& mail) {
+    this->toIdMap[userId]->liveQueue.push(mail);
+}
+
+int Pop3V2ServerConfig::addMailToDB(const Mail& mail) {
+    return this->db.mail.addMail(mail);
 }

@@ -20,6 +20,8 @@ public:
 protected:
     virtual void initCmd();
 private:
+    void helperAddMail(int userId, std::string subject, std::string body);
+
     void doStart(std::string cmd_argv[], int cmd_argc);
     void doStop(std::string cmd_argv[], int cmd_argc);
 

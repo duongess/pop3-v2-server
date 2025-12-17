@@ -16,18 +16,18 @@ bool MailTable::createTableIfNeeded()
 }
 
 
-bool MailTable::addMail(const Mail &m)
+int MailTable::addMail(const Mail &m)
 {
     static const char *sql =
         "INSERT INTO emails (userId, uidl, subject, body, receivedAt) "
-        "VALUES (?, ?, ?, ?, ?, ?);";
+        "VALUES (?, ?, ?, ?, ?);";
 
     sqlite3_stmt *stmt = nullptr;
     int rc = sqlite3_prepare_v2(conn_.get(), sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK)
     {
         std::cerr << "[MailTable] Failed to prepare insert statement: " << sqlite3_errmsg(conn_.get()) << "\n";
-        return false;
+        return -1;
     }
 
     // Generate a unique UIDL (timestamp + random suffix to avoid collisions when many mails share the same second)
@@ -44,8 +44,7 @@ bool MailTable::addMail(const Mail &m)
     sqlite3_bind_text(stmt, 2, uidl.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 3, m.subject.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 4, m.body.c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 5, flags.c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int64(stmt, 6, m.receivedAt);
+    sqlite3_bind_int64(stmt, 5, m.receivedAt);
 
     // Execute
     rc = sqlite3_step(stmt);
@@ -53,11 +52,12 @@ bool MailTable::addMail(const Mail &m)
     {
         std::cerr << "[MailTable] Failed to insert mail: " << sqlite3_errmsg(conn_.get()) << "\n";
         sqlite3_finalize(stmt);
-        return false;
+        return -1;
     }
 
     sqlite3_finalize(stmt);
-    return true;
+    int newId = (int)sqlite3_last_insert_rowid(conn_.get());
+    return newId;
 }
 
 std::vector<MailInfo> MailTable::listMailsForUser(int userId)

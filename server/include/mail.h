@@ -11,7 +11,7 @@ public:
     using Table::Table;
 
     bool createTableIfNeeded() override;
-    bool addMail(const Mail &m);
+    int addMail(const Mail &m);
     // ví dụ API riêng:
     // bool addMail(const  Mail& m);
     // std::vector<Mail> listByUser(int userId);

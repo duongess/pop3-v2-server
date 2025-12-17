@@ -33,6 +33,10 @@ class Pop3V2ServerConfig: public ServerConfig {
         bool loadAccountsFromFile(const std::string& filePath) override;
         std::vector<MailInfo> getMailsForUser(const int& userId);
         void loadMailsToQueue(const int& userId);
+        void addMailToUserQueue(const int& userId, const MailInfo& mail);
+        int addMailToDB(const Mail& mail);
+
+        bool getAccountLockedStatus(const int& userId);
 };
 
 #endif
