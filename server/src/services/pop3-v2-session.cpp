@@ -144,10 +144,10 @@ void Pop3V2Session::doList(std::string cmd_argv[], int cmd_argc) {
 
     } else {
         // (2) SỬA LOGIC ELSE: Đây là trường hợp 0 email, không phải lỗi
-        std::string log_msg = "[LIST] Found 0 emails for user '" + std::to_string(this->account->userId) + "'.";
+        std::string log_msg = "[LIST] Found 0 emails for user" + std::to_string(this->account->userId) + "\r\n.";
         console.error(log_msg); 
         
-        slave.send("-ERR 0 messages\r\n.\r\n");
+        slave.send("-ERR 0 messages.\r\n");
     }
 }
 
