@@ -11,9 +11,7 @@ public:
     using Table::Table;
 
     bool createTableIfNeeded() override;
-    bool addMail(const Mail &m);
-    bool deleteFlaggedMails(int userId);
-    bool setFlag(int mailId, const std::string &flag);
+    int addMail(const Mail &m);
     // ví dụ API riêng:
     // bool addMail(const  Mail& m);
     // std::vector<Mail> listByUser(int userId);

@@ -30,4 +30,5 @@ COPY --from=builder /usr/src/app/build/server /usr/app/build/server
 EXPOSE 21000
 
 # giữ cùng cấu trúc đường dẫn như lúc bạn chạy trên Windows
-CMD ["./build/server"]
+ENTRYPOINT ["./build/server"]
+CMD ["start"]

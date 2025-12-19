@@ -10,39 +10,24 @@ bool MailTable::createTableIfNeeded()
         "  uidl TEXT UNIQUE NOT NULL,"
         "  subject TEXT,"
         "  body TEXT,"
-        "  flags TEXT,"
         "  receivedAt INTEGER NOT NULL"
         ");";
     return exec_sql(conn_.get(), sql, "Emails");
 }
 
-bool MailTable::setFlag(int mailId, const std::string &flag)
-{
-    const char *sql = "UPDATE emails SET flags = ? WHERE mailId = ?";
-    sqlite3_stmt *stmt;
-    if (sqlite3_prepare_v2(conn_.get(), sql, -1, &stmt, nullptr) != SQLITE_OK)
-        return false;
 
-    sqlite3_bind_text(stmt, 1, flag.c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_int(stmt, 2, mailId);
-
-    bool ok = (sqlite3_step(stmt) == SQLITE_DONE);
-    sqlite3_finalize(stmt);
-    return ok;
-}
-
-bool MailTable::addMail(const Mail &m)
+int MailTable::addMail(const Mail &m)
 {
     static const char *sql =
-        "INSERT INTO emails (userId, uidl, subject, body, flags, receivedAt) "
-        "VALUES (?, ?, ?, ?, ?, ?);";
+        "INSERT INTO emails (userId, uidl, subject, body, receivedAt) "
+        "VALUES (?, ?, ?, ?, ?);";
 
     sqlite3_stmt *stmt = nullptr;
     int rc = sqlite3_prepare_v2(conn_.get(), sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK)
     {
         std::cerr << "[MailTable] Failed to prepare insert statement: " << sqlite3_errmsg(conn_.get()) << "\n";
-        return false;
+        return -1;
     }
 
     // Generate a unique UIDL (timestamp + random suffix to avoid collisions when many mails share the same second)
@@ -59,8 +44,7 @@ bool MailTable::addMail(const Mail &m)
     sqlite3_bind_text(stmt, 2, uidl.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 3, m.subject.c_str(), -1, SQLITE_TRANSIENT);
     sqlite3_bind_text(stmt, 4, m.body.c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_text(stmt, 5, flags.c_str(), -1, SQLITE_TRANSIENT);
-    sqlite3_bind_int64(stmt, 6, m.receivedAt);
+    sqlite3_bind_int64(stmt, 5, m.receivedAt);
 
     // Execute
     rc = sqlite3_step(stmt);
@@ -68,33 +52,20 @@ bool MailTable::addMail(const Mail &m)
     {
         std::cerr << "[MailTable] Failed to insert mail: " << sqlite3_errmsg(conn_.get()) << "\n";
         sqlite3_finalize(stmt);
-        return false;
+        return -1;
     }
 
     sqlite3_finalize(stmt);
-    return true;
-}
-
-bool MailTable::deleteFlaggedMails(int userId)
-{
-    const char *sql = "DELETE FROM emails WHERE userId = ? AND flags = 'read'";
-    sqlite3_stmt *stmt;
-
-    if (sqlite3_prepare_v2(conn_.get(), sql, -1, &stmt, nullptr) != SQLITE_OK)
-        return false;
-
-    sqlite3_bind_int(stmt, 1, userId);
-    bool ok = (sqlite3_step(stmt) == SQLITE_DONE);
-    sqlite3_finalize(stmt);
-    return ok;
+    int newId = (int)sqlite3_last_insert_rowid(conn_.get());
+    return newId;
 }
 
 std::vector<MailInfo> MailTable::listMailsForUser(int userId)
 {
     std::vector<MailInfo> list;
     const char *sql =
-        "SELECT mailId, uidl, LENGTH(body) "
-        "FROM emails WHERE userId = ? AND (flags IS NULL OR flags != 'read')";
+        "SELECT mailId, uidl, subject "
+        "FROM emails WHERE userId = ?";
 
     sqlite3_stmt *stmt = nullptr;
     if (sqlite3_prepare_v2(conn_.get(), sql, -1, &stmt, nullptr) != SQLITE_OK)
@@ -110,8 +81,8 @@ std::vector<MailInfo> MailTable::listMailsForUser(int userId)
     {
         MailInfo info;
         info.mailId = sqlite3_column_int(stmt, 0);
-        info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
-        info.size = sqlite3_column_int(stmt, 2);
+        // info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+        info.header = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
         list.push_back(info);
     }
 
@@ -122,9 +93,8 @@ std::vector<MailInfo> MailTable::listMailsForUser(int userId)
 std::optional<MailInfo> MailTable::getMailInfo(int userId, int mailId)
 {
     const char *sql =
-        "SELECT mailId, uidl, LENGTH(body) "
-        "FROM emails WHERE userId = ? AND mailId = ? "
-        "AND (flags IS NULL OR flags != 'read')";
+        "SELECT mailId, uidl, subject "
+        "FROM emails WHERE userId = ? AND mailId = ? ";
 
     sqlite3_stmt *stmt = nullptr;
     if (sqlite3_prepare_v2(conn_.get(), sql, -1, &stmt, nullptr) != SQLITE_OK)
@@ -141,8 +111,8 @@ std::optional<MailInfo> MailTable::getMailInfo(int userId, int mailId)
     if (sqlite3_step(stmt) == SQLITE_ROW)
     {
         info.mailId = sqlite3_column_int(stmt, 0);
-        info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
-        info.size = sqlite3_column_int(stmt, 2);
+        // info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+        info.header = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
         sqlite3_finalize(stmt);
         return info;
     }
