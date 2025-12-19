@@ -64,7 +64,7 @@ std::vector<MailInfo> MailTable::listMailsForUser(int userId)
 {
     std::vector<MailInfo> list;
     const char *sql =
-        "SELECT mailId, uidl, LENGTH(body) "
+        "SELECT mailId, uidl, subject "
         "FROM emails WHERE userId = ?";
 
     sqlite3_stmt *stmt = nullptr;
@@ -82,7 +82,7 @@ std::vector<MailInfo> MailTable::listMailsForUser(int userId)
         MailInfo info;
         info.mailId = sqlite3_column_int(stmt, 0);
         // info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
-        info.size = sqlite3_column_int(stmt, 2);
+        info.header = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
         list.push_back(info);
     }
 
@@ -93,7 +93,7 @@ std::vector<MailInfo> MailTable::listMailsForUser(int userId)
 std::optional<MailInfo> MailTable::getMailInfo(int userId, int mailId)
 {
     const char *sql =
-        "SELECT mailId, uidl, LENGTH(body) "
+        "SELECT mailId, uidl, subject "
         "FROM emails WHERE userId = ? AND mailId = ? ";
 
     sqlite3_stmt *stmt = nullptr;
@@ -112,7 +112,7 @@ std::optional<MailInfo> MailTable::getMailInfo(int userId, int mailId)
     {
         info.mailId = sqlite3_column_int(stmt, 0);
         // info.uidl = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
-        info.size = sqlite3_column_int(stmt, 2);
+        info.header = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
         sqlite3_finalize(stmt);
         return info;
     }

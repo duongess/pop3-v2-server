@@ -167,7 +167,7 @@ void ServerCLI::helperAddMail(int userId, std::string subject, std::string body)
     if (this->pop3V2->pop3V2Conf->getAccountLockedStatus(userId)) {
         MailInfo info;
         info.mailId = m.mailId;
-        info.size = body.length();
+        info.header = m.subject;
         
         this->pop3V2->pop3V2Conf->addMailToUserQueue(userId, info);
         console.info("Pushed mail to Active Session Queue for UserID: ", userId);

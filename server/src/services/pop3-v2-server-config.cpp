@@ -66,7 +66,7 @@ void Pop3V2ServerConfig::loadMailsToQueue(const int& userId) {
     std::vector<MailInfo> mails = this->db.mail.listMailsForUser(userId);
 
     for (const MailInfo& mail : mails) {
-        console.debug("Loading mail ID: " + std::to_string(mail.mailId) + " Size: " + std::to_string(mail.size));
+        console.debug("Loading mail ID: " + std::to_string(mail.mailId) + " Header: " + mail.header);
         this->toIdMap[userId]->liveQueue.push(mail);
     }
 }
