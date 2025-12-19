@@ -4,124 +4,160 @@ This project implements a basic **POP3 (Post Office Protocol version 3)** echo s
 
 ## 🚀 Key Features
 
-  * **Core Function:** POP3 V2 Echo Server.
-  * **Networking:** Utilizes fundamental TCP/IP sockets.
-  * **Build System:** CMake.
-  * **Windows Note:** Automatically links against the `Ws2_32` library via CMake.
-  * **Cross-Platform Support:** Includes necessary helper libraries/configurations for Linux and macOS (e.g., handling socket differences).
-  * **Database:** Uses **SQLite** for data persistence (e.g., user and mail storage).
-  * **Deployment Endpoint:** `interchange.proxy.rlwy.net:16785`
+* **Core Function:** POP3 V2 Echo Server.
+* **Networking:** Utilizes fundamental TCP/IP sockets.
+* **Build System:** CMake (Modern and Cross-Platform).
+* **Database:** Integrated **SQLite** for data persistence (user and mail storage) without requiring an external SQL server.
+* **Cross-Platform Support:**
+* **Windows:** Automatically links against the `Ws2_32` library.
+* **Linux/macOS:** Fully supported via GCC/Clang with standard socket APIs.
 
------
 
-## 🛠️ Setup and Build
+* **Deployment:** Supports rapid deployment via Docker.
 
-### 1\. Prerequisites
-
-You must have **gpp 15+** and **CMake** installed to build the project.
-
-**CMake Installation on Windows (using winget):**
-
-```bash
-winget install Kitware.CMake
-```
-
-### 2\. Build Process
-
-Execute the following commands from the project root directory:
-
-1.  **Create Build Directory:** Generate the necessary build files (e.g., Makefiles or Visual Studio projects) within the `build/` directory.
-    ```bash
-    cmake -S . -B build
-    ```
-2.  **Build Server:** Compile the source code to create the `server.exe` executable in the `build/` directory.
-    ```bash
-    cmake --build build --config Release
-    ```
-
------
-
-## 💻 Usage
-
-### Running the Server
-
-After a successful build, start the server using the generated executable:
-
-```bash
-build/server.exe
-```
-
-The server will begin listening for incoming client connections on the configured port.
-
-### Connecting the Client
-
-Use the dedicated client (available at [https://github.com/duongess/pop3-v2-client](https://github.com/duongess/pop3-v2-client)) to connect to the server and test the echo functionality.
-
-The client sends data, and the server echoes the exact data back.
-
------
-
-## 🐳 Docker Deployment
-
-To containerize the server application:
-
-1.  **Build Docker Image:** (Assuming a `Dockerfile` exists in the root directory)
-    ```bash
-    docker build -t pop3-echo-server .
-    ```
-2.  **Create and Run Container:** Start a container and map the necessary port to the host.
-    ```bash
-    docker run -d --name pop3-service -p 21000:21 pop3-echo-server
-    ```
-    *Note: Ensure the mapped port `21000` matches the port configured in your server's `config/` files.*
-
------
+---
 
 ## 📂 Project Structure
 
-The server-focused project is organized for modularity and clear separation of concerns:
+The project is organized into modules to separate core networking libraries, server logic, and storage layers:
 
-```bash
-Server/
+```text
+.
+├── lib/               # Shared libraries & Core utilities
+│   ├── include/       # Headers: socket.h, cli.h, utils.h...
+│   └── src/           # Implementation: TCP socket handling, CLI tools
 │
-├───common/               # Shared utilities and protocol definitions
-│       console.h
-│       protocol.cpp
-│       protocol.h
-│       utils.cpp
-│       utils.h
+├── server/            # Main Server Application
+│   ├── include/       # Headers: User, Mail, ServerConfig...
+│   └── src/           # Server implementation
+│       ├── services/  # POP3 protocol handlers & Session management
+│       └── storage/   # Database interactions (SQLite Wrappers)
 │
-├───config/               # Configuration files (host, port, etc.)
-│
-├───database/             # SQLite database files
-│       POP3V2.db
-│       POP3V2.dev.db
-│
-├───server/               # Main server implementation files
-│   ├───include/          # Server header files (interfaces)
-│   │       db.h
-│   │       dbConnection.h
-│   │       pop3-v2.h
-│   │       server.h
-│   │       service-manager.h
-│   │       session-manager.h
-│   │       tcp.h
-│   │       mail.h, user.h, table.h ...
-│   │
-│   └───src/              # Server source files (implementation)
-│       │   main.cpp      # Server entry point
-│       │   server.cpp
-│       ├───services/     # Protocol and networking handlers
-│       │       pop3-v2.cpp
-│       │       tcp.cpp
-│       │
-│       └───storage/      # Database interaction (ORM/DAO)
-│               db.cpp
-│               dbConnection.cpp
-│               mail.cpp
-│               user.cpp
-│
-├───sqlite/               # SQLite library/source files (if static linking)
-│
-└───types/                # Custom data type definitions
+├── sqlite/            # SQLite source files (Vendor code)
+├── types/             # Common data type definitions
+├── CMakeLists.txt     # Main build configuration
+└── Dockerfile         # Docker build configuration
+
 ```
+
+---
+
+## 🛠️ Setup and Build
+
+### 1. Prerequisites
+
+* **C++ Compiler:** Must support **C++17** or higher (GCC, Clang, or MSVC).
+* **CMake:** Version 3.15 or higher.
+
+### 2. Build Instructions
+
+#### 🐧 Linux (Ubuntu/Debian) & 🍎 macOS
+
+1. **Install Dependencies:**
+* **Ubuntu/Debian:**
+```bash
+sudo apt-get update
+sudo apt-get install build-essential cmake
+
+```
+
+
+* **macOS (via Homebrew):**
+```bash
+brew install cmake
+
+```
+
+
+
+
+2. **Build:**
+Navigate to the project root and run:
+```bash
+# Generate build files
+cmake -S . -B build
+
+# Compile the project
+cmake --build build --config Release
+
+```
+
+
+3. **Run the Server:**
+```bash
+./build/server
+
+```
+
+
+
+#### 🪟 Windows
+
+1. **Install CMake:**
+Using Winget or downloading from the official site:
+```powershell
+winget install Kitware.CMake
+
+```
+
+
+2. **Build:**
+Open PowerShell or CMD at the project root:
+```powershell
+# Generate build files (Visual Studio solution or MinGW makefiles)
+cmake -S . -B build
+
+# Compile the executable
+cmake --build build --config Release
+
+```
+
+
+3. **Run the Server:**
+```powershell
+# Path may vary depending on the generator (Release/Debug folders)
+.\build\Release\server.exe
+# Or if using MinGW/Ninja:
+.\build\server.exe
+
+```
+
+
+
+---
+
+## 🐳 Docker Deployment
+
+You can containerize and run the application instantly without setting up a C++ environment.
+
+1. **Build Docker Image:**
+```bash
+docker build -t pop3-echo-server .
+
+```
+
+
+2. **Run Container:**
+Start the container and map the ports (e.g., mapping host port `21000` to container port `21`):
+```bash
+docker run -d --name pop3-service -p 21000:21 pop3-echo-server
+
+```
+
+
+*Note: Ensure the mapped port matches the configuration in your server config files.*
+
+---
+
+## 💻 Usage (Client)
+
+Once the server is running and listening for connections:
+
+1. **Connect:** Use the dedicated client available at [https://github.com/duongess/pop3-v2-client](https://github.com/duongess/pop3-v2-client).
+2. **Interaction:** The client sends data (POP3 commands or text strings), and the server will echo the exact data back to verify the connection and protocol integrity.
+
+---
+
+## 📝 License
+
+This project is open-source. Please refer to the `LICENSE` file in the root directory for more information.
